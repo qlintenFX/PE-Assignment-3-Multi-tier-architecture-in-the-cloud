@@ -1,0 +1,72 @@
+{
+  "TargetHealthDescriptions": [
+    {
+      "Target": {
+        "Id": "10.0.3.97",
+        "Port": 8000,
+        "AvailabilityZone": "us-east-1a"
+      },
+      "HealthCheckPort": "8000",
+      "TargetHealth": {
+        "State": "healthy"
+      },
+      "AdministrativeOverride": {
+        "State": "no_override",
+        "Reason": "AdministrativeOverride.NoOverride",
+        "Description": "No override is currently active on target"
+      }
+    },
+    {
+      "Target": {
+        "Id": "10.0.3.189",
+        "Port": 8000,
+        "AvailabilityZone": "us-east-1a"
+      },
+      "HealthCheckPort": "8000",
+      "TargetHealth": {
+        "State": "draining",
+        "Reason": "Target.DeregistrationInProgress",
+        "Description": "Target deregistration is in progress"
+      },
+      "AdministrativeOverride": {
+        "State": "no_override",
+        "Reason": "AdministrativeOverride.NoOverride",
+        "Description": "No override is currently active on target"
+      }
+    },
+    {
+      "Target": {
+        "Id": "10.0.4.224",
+        "Port": 8000,
+        "AvailabilityZone": "us-east-1b"
+      },
+      "HealthCheckPort": "8000",
+      "TargetHealth": {
+        "State": "healthy"
+      },
+      "AdministrativeOverride": {
+        "State": "no_override",
+        "Reason": "AdministrativeOverride.NoOverride",
+        "Description": "No override is currently active on target"
+      }
+    },
+    {
+      "Target": {
+        "Id": "10.0.3.241",
+        "Port": 8000,
+        "AvailabilityZone": "us-east-1a"
+      },
+      "HealthCheckPort": "8000",
+      "TargetHealth": {
+        "State": "draining",
+        "Reason": "Target.DeregistrationInProgress",
+        "Description": "Target deregistration is in progress"
+      },
+      "AdministrativeOverride": {
+        "State": "no_override",
+        "Reason": "AdministrativeOverride.NoOverride",
+        "Description": "No override is currently active on target"
+      }
+    }
+  ]
+}

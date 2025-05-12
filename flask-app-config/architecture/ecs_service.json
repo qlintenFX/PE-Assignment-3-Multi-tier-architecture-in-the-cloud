@@ -1,0 +1,508 @@
+{
+  "services": [
+    {
+      "serviceArn": "arn:aws:ecs:us-east-1:180116291619:service/flask-app-cluster/flask-app-service",
+      "serviceName": "flask-app-service",
+      "clusterArn": "arn:aws:ecs:us-east-1:180116291619:cluster/flask-app-cluster",
+      "loadBalancers": [
+        {
+          "targetGroupArn": "arn:aws:elasticloadbalancing:us-east-1:180116291619:targetgroup/flask-app-tg/8c6938b0a2a3d5a3",
+          "containerName": "flask-app",
+          "containerPort": 8000
+        }
+      ],
+      "serviceRegistries": [],
+      "status": "ACTIVE",
+      "desiredCount": 2,
+      "runningCount": 2,
+      "pendingCount": 0,
+      "launchType": "FARGATE",
+      "platformVersion": "LATEST",
+      "platformFamily": "Linux",
+      "taskDefinition": "arn:aws:ecs:us-east-1:180116291619:task-definition/flask-app-task:1",
+      "deploymentConfiguration": {
+        "deploymentCircuitBreaker": {
+          "enable": true,
+          "rollback": true
+        },
+        "maximumPercent": 200,
+        "minimumHealthyPercent": 100,
+        "alarms": {
+          "alarmNames": [],
+          "rollback": false,
+          "enable": false
+        }
+      },
+      "deployments": [
+        {
+          "id": "ecs-svc/6961318202471324175",
+          "status": "PRIMARY",
+          "taskDefinition": "arn:aws:ecs:us-east-1:180116291619:task-definition/flask-app-task:1",
+          "desiredCount": 2,
+          "pendingCount": 0,
+          "runningCount": 0,
+          "failedTasks": 4,
+          "createdAt": 1747076407.574,
+          "updatedAt": 1747077786.669,
+          "launchType": "FARGATE",
+          "platformVersion": "1.4.0",
+          "platformFamily": "Linux",
+          "networkConfiguration": {
+            "awsvpcConfiguration": {
+              "subnets": [
+                "subnet-0994e8657b3d555a3",
+                "subnet-0a2e49456eef1f15b"
+              ],
+              "securityGroups": [
+                "sg-041f9fdae8f330960"
+              ],
+              "assignPublicIp": "DISABLED"
+            }
+          },
+          "rolloutState": "FAILED",
+          "rolloutStateReason": "ECS deployment circuit breaker: tasks failed to start."
+        },
+        {
+          "id": "ecs-svc/2380234403209799184",
+          "status": "ACTIVE",
+          "taskDefinition": "arn:aws:ecs:us-east-1:180116291619:task-definition/flask-app-task:1",
+          "desiredCount": 1,
+          "pendingCount": 0,
+          "runningCount": 1,
+          "failedTasks": 3,
+          "createdAt": 1747062605.371,
+          "updatedAt": 1747077786.679,
+          "launchType": "FARGATE",
+          "platformVersion": "1.4.0",
+          "platformFamily": "Linux",
+          "networkConfiguration": {
+            "awsvpcConfiguration": {
+              "subnets": [
+                "subnet-0994e8657b3d555a3",
+                "subnet-0a2e49456eef1f15b"
+              ],
+              "securityGroups": [
+                "sg-041f9fdae8f330960"
+              ],
+              "assignPublicIp": "DISABLED"
+            }
+          },
+          "rolloutState": "FAILED",
+          "rolloutStateReason": "ECS deployment circuit breaker: tasks failed to start."
+        },
+        {
+          "id": "ecs-svc/9754673592629468258",
+          "status": "ACTIVE",
+          "taskDefinition": "arn:aws:ecs:us-east-1:180116291619:task-definition/flask-app-task:1",
+          "desiredCount": 1,
+          "pendingCount": 0,
+          "runningCount": 1,
+          "failedTasks": 0,
+          "createdAt": 1747076293.519,
+          "updatedAt": 1747077786.684,
+          "launchType": "FARGATE",
+          "platformVersion": "1.4.0",
+          "platformFamily": "Linux",
+          "networkConfiguration": {
+            "awsvpcConfiguration": {
+              "subnets": [
+                "subnet-0994e8657b3d555a3",
+                "subnet-0a2e49456eef1f15b"
+              ],
+              "securityGroups": [
+                "sg-041f9fdae8f330960"
+              ],
+              "assignPublicIp": "DISABLED"
+            }
+          },
+          "rolloutState": "IN_PROGRESS",
+          "rolloutStateReason": "ECS deployment ecs-svc/9754673592629468258 in progress."
+        }
+      ],
+      "roleArn": "arn:aws:iam::180116291619:role/aws-service-role/ecs.amazonaws.com/AWSServiceRoleForECS",
+      "events": [
+        {
+          "id": "24167172-d704-4b56-9877-8b97946780e1",
+          "createdAt": 1747077783.746,
+          "message": "(service flask-app-service) (deployment ecs-svc/6961318202471324175) deployment failed: tasks failed to start."
+        },
+        {
+          "id": "0f7f7f01-060f-4b97-8c4c-2d8c92e4ae59",
+          "createdAt": 1747077656.157,
+          "message": "(service flask-app-service) deregistered 1 targets in (target-group arn:aws:elasticloadbalancing:us-east-1:180116291619:targetgroup/flask-app-tg/8c6938b0a2a3d5a3)"
+        },
+        {
+          "id": "66f10ec4-c738-4773-8978-77415d9163d6",
+          "createdAt": 1747077656.051,
+          "message": "(service flask-app-service, taskSet ecs-svc/6961318202471324175) has begun draining connections on 1 tasks."
+        },
+        {
+          "id": "c8f51e5f-8ba9-4b83-b39b-f07c3d1a86c4",
+          "createdAt": 1747077656.046,
+          "message": "(service flask-app-service) deregistered 1 targets in (target-group arn:aws:elasticloadbalancing:us-east-1:180116291619:targetgroup/flask-app-tg/8c6938b0a2a3d5a3)"
+        },
+        {
+          "id": "a5b83827-aca9-43a4-8e70-9774a79a0d06",
+          "createdAt": 1747077615.921,
+          "message": "(service flask-app-service) registered 1 targets in (target-group arn:aws:elasticloadbalancing:us-east-1:180116291619:targetgroup/flask-app-tg/8c6938b0a2a3d5a3)"
+        },
+        {
+          "id": "84988780-738e-4858-bad8-024e338d788b",
+          "createdAt": 1747077585.859,
+          "message": "(service flask-app-service) has started 1 tasks: (task 5589020426b9458a9c5add4d39f1e103)."
+        },
+        {
+          "id": "2ed21534-055d-4bbf-bf29-eb1a8fef13a6",
+          "createdAt": 1747077574.857,
+          "message": "(service flask-app-service) deregistered 1 targets in (target-group arn:aws:elasticloadbalancing:us-east-1:180116291619:targetgroup/flask-app-tg/8c6938b0a2a3d5a3)"
+        },
+        {
+          "id": "cd44f8a8-b4be-4ed6-bb3f-96deb67652f9",
+          "createdAt": 1747077574.748,
+          "message": "(service flask-app-service, taskSet ecs-svc/6961318202471324175) has begun draining connections on 1 tasks."
+        },
+        {
+          "id": "9510d88b-25cd-4ad0-802a-91f576d13611",
+          "createdAt": 1747077574.737,
+          "message": "(service flask-app-service) deregistered 1 targets in (target-group arn:aws:elasticloadbalancing:us-east-1:180116291619:targetgroup/flask-app-tg/8c6938b0a2a3d5a3)"
+        },
+        {
+          "id": "de7b7dc0-58b9-492b-b933-77595403958d",
+          "createdAt": 1747077535.252,
+          "message": "(service flask-app-service) registered 1 targets in (target-group arn:aws:elasticloadbalancing:us-east-1:180116291619:targetgroup/flask-app-tg/8c6938b0a2a3d5a3)"
+        },
+        {
+          "id": "76138787-4a33-4089-b538-6af498632a05",
+          "createdAt": 1747077507.163,
+          "message": "(service flask-app-service) has started 1 tasks: (task 8efe8caa6a1d496bbd64b80c9a904845)."
+        },
+        {
+          "id": "a005f54d-1d75-42a1-b40e-60322af69c76",
+          "createdAt": 1747077234.284,
+          "message": "(service flask-app-service, taskSet ecs-svc/6961318202471324175) has begun draining connections on 1 tasks."
+        },
+        {
+          "id": "bd90856f-0890-43d9-99dd-43ffb5b55ef8",
+          "createdAt": 1747077234.279,
+          "message": "(service flask-app-service) deregistered 1 targets in (target-group arn:aws:elasticloadbalancing:us-east-1:180116291619:targetgroup/flask-app-tg/8c6938b0a2a3d5a3)"
+        },
+        {
+          "id": "e90c5343-28a6-4c19-8226-1014fed77a3d",
+          "createdAt": 1747077224.472,
+          "message": "(service flask-app-service) registered 1 targets in (target-group arn:aws:elasticloadbalancing:us-east-1:180116291619:targetgroup/flask-app-tg/8c6938b0a2a3d5a3)"
+        },
+        {
+          "id": "e14619f0-27c1-4f22-aa13-75286346e278",
+          "createdAt": 1747077205.43,
+          "message": "(service flask-app-service) has started 1 tasks: (task a71c694ac1a14094a970f070b8a8916b)."
+        },
+        {
+          "id": "9bd12cec-f966-4da4-b5a4-cf5f87ca70be",
+          "createdAt": 1747077186.115,
+          "message": "(service flask-app-service) deregistered 1 targets in (target-group arn:aws:elasticloadbalancing:us-east-1:180116291619:targetgroup/flask-app-tg/8c6938b0a2a3d5a3)"
+        },
+        {
+          "id": "53d74dad-a8d4-4065-a057-2baf1352bd5e",
+          "createdAt": 1747077186.021,
+          "message": "(service flask-app-service, taskSet ecs-svc/6961318202471324175) has begun draining connections on 1 tasks."
+        },
+        {
+          "id": "97e9f5e6-6bce-425b-9c31-06d1c588e654",
+          "createdAt": 1747077186.01,
+          "message": "(service flask-app-service) deregistered 1 targets in (target-group arn:aws:elasticloadbalancing:us-east-1:180116291619:targetgroup/flask-app-tg/8c6938b0a2a3d5a3)"
+        },
+        {
+          "id": "7354e0b6-00f2-4bc8-951a-14c2cb1a4ae7",
+          "createdAt": 1747077144.098,
+          "message": "(service flask-app-service) registered 1 targets in (target-group arn:aws:elasticloadbalancing:us-east-1:180116291619:targetgroup/flask-app-tg/8c6938b0a2a3d5a3)"
+        },
+        {
+          "id": "2c648302-67b1-420f-b270-66f3de514e56",
+          "createdAt": 1747077114.23,
+          "message": "(service flask-app-service) has started 1 tasks: (task bad740d504f54f53820d9b4ab351aec4)."
+        },
+        {
+          "id": "10ce263a-2f0e-4984-8e5a-fd678f4e99c8",
+          "createdAt": 1747076873.877,
+          "message": "(service flask-app-service, taskSet ecs-svc/6961318202471324175) has begun draining connections on 1 tasks."
+        },
+        {
+          "id": "1c3e87c6-c1ae-420c-be3c-727fd087e7b3",
+          "createdAt": 1747076873.873,
+          "message": "(service flask-app-service) deregistered 1 targets in (target-group arn:aws:elasticloadbalancing:us-east-1:180116291619:targetgroup/flask-app-tg/8c6938b0a2a3d5a3)"
+        },
+        {
+          "id": "4373bc00-488f-4483-91ae-d45d62f72cfb",
+          "createdAt": 1747076863.99,
+          "message": "(service flask-app-service) registered 1 targets in (target-group arn:aws:elasticloadbalancing:us-east-1:180116291619:targetgroup/flask-app-tg/8c6938b0a2a3d5a3)"
+        },
+        {
+          "id": "33faaae1-9820-4ecd-9df8-7f49b76a143e",
+          "createdAt": 1747076835.065,
+          "message": "(service flask-app-service) has started 1 tasks: (task 2878d0051d92449eb568d53c207d13d1)."
+        },
+        {
+          "id": "ec9e8295-9d3a-4716-a7c7-c5eae2fb2e71",
+          "createdAt": 1747076802.519,
+          "message": "(service flask-app-service, taskSet ecs-svc/6961318202471324175) has begun draining connections on 1 tasks."
+        },
+        {
+          "id": "bb7d9156-50ce-427b-abbd-6142a6abce02",
+          "createdAt": 1747076802.511,
+          "message": "(service flask-app-service) deregistered 1 targets in (target-group arn:aws:elasticloadbalancing:us-east-1:180116291619:targetgroup/flask-app-tg/8c6938b0a2a3d5a3)"
+        },
+        {
+          "id": "877550df-6067-4c0f-b802-496f16bf4a49",
+          "createdAt": 1747076783.939,
+          "message": "(service flask-app-service) registered 1 targets in (target-group arn:aws:elasticloadbalancing:us-east-1:180116291619:targetgroup/flask-app-tg/8c6938b0a2a3d5a3)"
+        },
+        {
+          "id": "12bc565b-350c-4e44-9091-4b6d5b7824f4",
+          "createdAt": 1747076763.459,
+          "message": "(service flask-app-service) has started 1 tasks: (task b7117c4e92a9460096c3e424fe8a772a)."
+        },
+        {
+          "id": "00b004a8-ad24-4c1e-bc2a-8293cd02ace5",
+          "createdAt": 1747076488.595,
+          "message": "(service flask-app-service, taskSet ecs-svc/9754673592629468258) has begun draining connections on 1 tasks."
+        },
+        {
+          "id": "aea79c3c-7f4e-43cb-8f29-5af6fa7f0685",
+          "createdAt": 1747076488.591,
+          "message": "(service flask-app-service) deregistered 1 targets in (target-group arn:aws:elasticloadbalancing:us-east-1:180116291619:targetgroup/flask-app-tg/8c6938b0a2a3d5a3)"
+        },
+        {
+          "id": "e40c9391-8c4b-4bc4-93f4-60c0b3af7683",
+          "createdAt": 1747076479.17,
+          "message": "(service flask-app-service) has stopped 1 running tasks: (task 164c2632582849bb8e7b5444c92feeac)."
+        },
+        {
+          "id": "2ef5c1fd-2728-4eb1-ad46-bc54fdea0b4f",
+          "createdAt": 1747076427.892,
+          "message": "(service flask-app-service) registered 1 targets in (target-group arn:aws:elasticloadbalancing:us-east-1:180116291619:targetgroup/flask-app-tg/8c6938b0a2a3d5a3)"
+        },
+        {
+          "id": "4ef9508d-454e-478b-bac5-824216fe096b",
+          "createdAt": 1747076408.25,
+          "message": "(service flask-app-service) deregistered 1 targets in (target-group arn:aws:elasticloadbalancing:us-east-1:180116291619:targetgroup/flask-app-tg/8c6938b0a2a3d5a3)"
+        },
+        {
+          "id": "a286a94e-dc8b-4f32-9e09-dadf5cfb2341",
+          "createdAt": 1747076408.166,
+          "message": "(service flask-app-service, taskSet ecs-svc/2380234403209799184) has begun draining connections on 1 tasks."
+        },
+        {
+          "id": "e55de4fe-2f7d-48bc-8bcf-0a1d592e7877",
+          "createdAt": 1747076408.162,
+          "message": "(service flask-app-service) deregistered 1 targets in (target-group arn:aws:elasticloadbalancing:us-east-1:180116291619:targetgroup/flask-app-tg/8c6938b0a2a3d5a3)"
+        },
+        {
+          "id": "f5b1ffaa-4b30-4089-a746-e9a6c22d89b4",
+          "createdAt": 1747076398.98,
+          "message": "(service flask-app-service) has stopped 1 running tasks: (task 889ca12cb03b4caba30a71095b373c2d)."
+        },
+        {
+          "id": "276bf1e1-292d-44c6-9fb6-8d29af254718",
+          "createdAt": 1747076398.933,
+          "message": "(service flask-app-service) (port 8000) is unhealthy in (target-group arn:aws:elasticloadbalancing:us-east-1:180116291619:targetgroup/flask-app-tg/8c6938b0a2a3d5a3) due to (reason Health checks failed with these codes: [500])."
+        },
+        {
+          "id": "2782d3b6-89c5-4f7c-857c-274ba8eb1720",
+          "createdAt": 1747076398.897,
+          "message": "(service flask-app-service) has started 1 tasks: (task 673e8707b45a467a8e962b25ee416ac1)."
+        },
+        {
+          "id": "ce6a3943-865b-4000-a2d5-006fc389b98a",
+          "createdAt": 1747076388.613,
+          "message": "(service flask-app-service) registered 1 targets in (target-group arn:aws:elasticloadbalancing:us-east-1:180116291619:targetgroup/flask-app-tg/8c6938b0a2a3d5a3)"
+        },
+        {
+          "id": "d50afe52-3454-4f60-a507-631bc55408a4",
+          "createdAt": 1747076357.535,
+          "message": "(service flask-app-service) has started 1 tasks: (task 164c2632582849bb8e7b5444c92feeac)."
+        },
+        {
+          "id": "3a1bac22-4312-46b4-b7b0-c89c62a5b91a",
+          "createdAt": 1747063220.874,
+          "message": "(service flask-app-service) deregistered 1 targets in (target-group arn:aws:elasticloadbalancing:us-east-1:180116291619:targetgroup/flask-app-tg/8c6938b0a2a3d5a3)"
+        },
+        {
+          "id": "bcd7bd91-5984-4298-b070-6fdab504b4da",
+          "createdAt": 1747063220.797,
+          "message": "(service flask-app-service, taskSet ecs-svc/2380234403209799184) has begun draining connections on 1 tasks."
+        },
+        {
+          "id": "b90c1a74-1f4d-4634-aa6b-87c4c54c7ce1",
+          "createdAt": 1747063220.794,
+          "message": "(service flask-app-service) deregistered 1 targets in (target-group arn:aws:elasticloadbalancing:us-east-1:180116291619:targetgroup/flask-app-tg/8c6938b0a2a3d5a3)"
+        },
+        {
+          "id": "e83ed2f9-5c69-4f18-8974-044b0cd98743",
+          "createdAt": 1747063211.413,
+          "message": "(service flask-app-service) has stopped 1 running tasks: (task 0cbedb2703dc49d28159508e28c26c3f)."
+        },
+        {
+          "id": "a64317dd-fe0e-45d7-b931-874d225c7fce",
+          "createdAt": 1747063211.368,
+          "message": "(service flask-app-service) (port 8000) is unhealthy in (target-group arn:aws:elasticloadbalancing:us-east-1:180116291619:targetgroup/flask-app-tg/8c6938b0a2a3d5a3) due to (reason Health checks failed with these codes: [500])."
+        },
+        {
+          "id": "7089377b-88c8-4666-bc76-bb5977158598",
+          "createdAt": 1747063190.59,
+          "message": "(service flask-app-service) deregistered 1 targets in (target-group arn:aws:elasticloadbalancing:us-east-1:180116291619:targetgroup/flask-app-tg/8c6938b0a2a3d5a3)"
+        },
+        {
+          "id": "9329ab31-82ff-42e0-a045-a75f71c137d0",
+          "createdAt": 1747063190.509,
+          "message": "(service flask-app-service, taskSet ecs-svc/2380234403209799184) has begun draining connections on 1 tasks."
+        },
+        {
+          "id": "7792d418-9921-4921-a41d-855d6fe74dc5",
+          "createdAt": 1747063190.499,
+          "message": "(service flask-app-service) deregistered 1 targets in (target-group arn:aws:elasticloadbalancing:us-east-1:180116291619:targetgroup/flask-app-tg/8c6938b0a2a3d5a3)"
+        },
+        {
+          "id": "8003b23e-a3fe-4bf3-8435-467840883c05",
+          "createdAt": 1747063182.501,
+          "message": "(service flask-app-service) (deployment ecs-svc/2380234403209799184) deployment failed: tasks failed to start."
+        },
+        {
+          "id": "7511a9f3-c2d4-4a43-9d40-2d8213b00990",
+          "createdAt": 1747063181.395,
+          "message": "(service flask-app-service) has stopped 1 running tasks: (task 9a7e172d0b6e4fec8c35098f363c4f8d)."
+        },
+        {
+          "id": "17442e82-8787-4491-a8d6-2fb135528e7d",
+          "createdAt": 1747063181.353,
+          "message": "(service flask-app-service) (port 8000) is unhealthy in (target-group arn:aws:elasticloadbalancing:us-east-1:180116291619:targetgroup/flask-app-tg/8c6938b0a2a3d5a3) due to (reason Health checks failed with these codes: [500])."
+        },
+        {
+          "id": "b843fb9d-19d3-4ebe-bebd-dd8d11c98f7e",
+          "createdAt": 1747063171.414,
+          "message": "(service flask-app-service) registered 1 targets in (target-group arn:aws:elasticloadbalancing:us-east-1:180116291619:targetgroup/flask-app-tg/8c6938b0a2a3d5a3)"
+        },
+        {
+          "id": "0a3c4752-64f3-44e0-a66f-e60522cace47",
+          "createdAt": 1747063140.759,
+          "message": "(service flask-app-service) has started 1 tasks: (task 1e71bbc0672747ee91f61cd8150fd529). Amazon ECS replaced 1 tasks due to an unhealthy status."
+        },
+        {
+          "id": "5c1aa542-d660-4375-95aa-4dd7e873a874",
+          "createdAt": 1747063139.924,
+          "message": "(service flask-app-service) registered 1 targets in (target-group arn:aws:elasticloadbalancing:us-east-1:180116291619:targetgroup/flask-app-tg/8c6938b0a2a3d5a3)"
+        },
+        {
+          "id": "9c5e6425-db06-4b02-9c8f-7e43e762aaa5",
+          "createdAt": 1747063110.899,
+          "message": "(service flask-app-service) has started 1 tasks: (task 0cbedb2703dc49d28159508e28c26c3f). Amazon ECS replaced 1 tasks due to an unhealthy status."
+        },
+        {
+          "id": "23a5dd07-648d-4ab5-a0f0-c9763fc7031e",
+          "createdAt": 1747062805.721,
+          "message": "(service flask-app-service, taskSet ecs-svc/2380234403209799184) has begun draining connections on 1 tasks."
+        },
+        {
+          "id": "17f45213-7ba5-4171-98c0-14aafee4816c",
+          "createdAt": 1747062796.015,
+          "message": "(service flask-app-service) deregistered 1 targets in (target-group arn:aws:elasticloadbalancing:us-east-1:180116291619:targetgroup/flask-app-tg/8c6938b0a2a3d5a3)"
+        },
+        {
+          "id": "e6b27d7f-6dd4-41b6-bc18-b93276dd7b33",
+          "createdAt": 1747062795.008,
+          "message": "(service flask-app-service) has stopped 1 running tasks: (task 62c8e194304a4f7db96df1bb9be8d72b)."
+        },
+        {
+          "id": "a834e234-85f0-4406-8ff7-5772ce71b207",
+          "createdAt": 1747062794.974,
+          "message": "(service flask-app-service) (port 8000) is unhealthy in (target-group arn:aws:elasticloadbalancing:us-east-1:180116291619:targetgroup/flask-app-tg/8c6938b0a2a3d5a3) due to (reason Health checks failed with these codes: [500])."
+        },
+        {
+          "id": "35946d8a-8817-4378-a686-3bbe286171b3",
+          "createdAt": 1747062764.483,
+          "message": "(service flask-app-service) deregistered 1 targets in (target-group arn:aws:elasticloadbalancing:us-east-1:180116291619:targetgroup/flask-app-tg/8c6938b0a2a3d5a3)"
+        },
+        {
+          "id": "f00c5a52-a1ff-4cf4-8d45-3a58f3272342",
+          "createdAt": 1747062764.421,
+          "message": "(service flask-app-service, taskSet ecs-svc/2380234403209799184) has begun draining connections on 1 tasks."
+        },
+        {
+          "id": "3524e74c-b999-407e-8a35-dc2f916eed93",
+          "createdAt": 1747062764.417,
+          "message": "(service flask-app-service) deregistered 1 targets in (target-group arn:aws:elasticloadbalancing:us-east-1:180116291619:targetgroup/flask-app-tg/8c6938b0a2a3d5a3)"
+        },
+        {
+          "id": "f3bc8f79-0f4e-43ec-b570-b4719964fefd",
+          "createdAt": 1747062754.81,
+          "message": "(service flask-app-service) has stopped 1 running tasks: (task a46a9f6db8214f08bd4e78b2ce6ef9b9)."
+        },
+        {
+          "id": "7a6fa168-f055-4e79-913d-a079982a9a6d",
+          "createdAt": 1747062754.776,
+          "message": "(service flask-app-service) (port 8000) is unhealthy in (target-group arn:aws:elasticloadbalancing:us-east-1:180116291619:targetgroup/flask-app-tg/8c6938b0a2a3d5a3) due to (reason Health checks failed with these codes: [500])."
+        },
+        {
+          "id": "6c5a640e-742d-470e-990b-0cff8c3d693c",
+          "createdAt": 1747062754.716,
+          "message": "(service flask-app-service) registered 1 targets in (target-group arn:aws:elasticloadbalancing:us-east-1:180116291619:targetgroup/flask-app-tg/8c6938b0a2a3d5a3)"
+        },
+        {
+          "id": "4d654922-debb-44d1-bbd3-75645f76199d",
+          "createdAt": 1747062725.083,
+          "message": "(service flask-app-service) has started 1 tasks: (task 9a7e172d0b6e4fec8c35098f363c4f8d). Amazon ECS replaced 1 tasks due to an unhealthy status."
+        },
+        {
+          "id": "ebcf2ffa-68c3-4f86-bdff-08cca686feb4",
+          "createdAt": 1747062714.948,
+          "message": "(service flask-app-service) registered 1 targets in (target-group arn:aws:elasticloadbalancing:us-east-1:180116291619:targetgroup/flask-app-tg/8c6938b0a2a3d5a3)"
+        },
+        {
+          "id": "783a8572-ffcb-473e-9c6f-1db46cbfb51c",
+          "createdAt": 1747062685.288,
+          "message": "(service flask-app-service) has started 1 tasks: (task 889ca12cb03b4caba30a71095b373c2d). Amazon ECS replaced 1 tasks due to an unhealthy status."
+        },
+        {
+          "id": "d2c061af-c1bf-4cb6-940f-dc61043b70e6",
+          "createdAt": 1747062653.386,
+          "message": "(service flask-app-service) registered 1 targets in (target-group arn:aws:elasticloadbalancing:us-east-1:180116291619:targetgroup/flask-app-tg/8c6938b0a2a3d5a3)"
+        },
+        {
+          "id": "2622f019-6a80-464b-9d28-83cb423c9963",
+          "createdAt": 1747062643.928,
+          "message": "(service flask-app-service) has started 1 tasks: (task a46a9f6db8214f08bd4e78b2ce6ef9b9)."
+        },
+        {
+          "id": "1628e59e-d4da-49b6-a1ec-be1e6cc9cb23",
+          "createdAt": 1747062624.342,
+          "message": "(service flask-app-service) has started 1 tasks: (task 62c8e194304a4f7db96df1bb9be8d72b)."
+        }
+      ],
+      "createdAt": 1747062605.371,
+      "placementConstraints": [],
+      "placementStrategy": [],
+      "networkConfiguration": {
+        "awsvpcConfiguration": {
+          "subnets": [
+            "subnet-0994e8657b3d555a3",
+            "subnet-0a2e49456eef1f15b"
+          ],
+          "securityGroups": [
+            "sg-041f9fdae8f330960"
+          ],
+          "assignPublicIp": "DISABLED"
+        }
+      },
+      "healthCheckGracePeriodSeconds": 0,
+      "schedulingStrategy": "REPLICA",
+      "deploymentController": {
+        "type": "ECS"
+      },
+      "createdBy": "arn:aws:iam::180116291619:role/voclabs",
+      "enableECSManagedTags": true,
+      "propagateTags": "NONE",
+      "enableExecuteCommand": false,
+      "availabilityZoneRebalancing": "ENABLED"
+    }
+  ],
+  "failures": []
+}

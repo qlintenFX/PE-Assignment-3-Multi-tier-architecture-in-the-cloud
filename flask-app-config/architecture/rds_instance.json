@@ -1,0 +1,103 @@
+{
+  "DBInstances": [
+    {
+      "DBInstanceIdentifier": "flask-crud-db",
+      "DBInstanceClass": "db.t3.micro",
+      "Engine": "mysql",
+      "DBInstanceStatus": "available",
+      "MasterUsername": "admin",
+      "DBName": "flaskcrud",
+      "Endpoint": {
+        "Address": "flask-crud-db.czyocqcwwzna.us-east-1.rds.amazonaws.com",
+        "Port": 3306,
+        "HostedZoneId": "Z2R2ITUGPM61AM"
+      },
+      "AllocatedStorage": 20,
+      "InstanceCreateTime": "2025-05-12T14:15:29.693Z",
+      "PreferredBackupWindow": "09:18-09:48",
+      "BackupRetentionPeriod": 7,
+      "DBSecurityGroups": [],
+      "VpcSecurityGroups": [
+        {
+          "VpcSecurityGroupId": "sg-00e90afc8d7effe6f",
+          "Status": "active"
+        }
+      ],
+      "DBParameterGroups": [
+        {
+          "DBParameterGroupName": "default.mysql8.0",
+          "ParameterApplyStatus": "in-sync"
+        }
+      ],
+      "AvailabilityZone": "us-east-1b",
+      "DBSubnetGroup": {
+        "DBSubnetGroupName": "flask-db-subnet-group",
+        "DBSubnetGroupDescription": "Subnet group for Flask app database",
+        "VpcId": "vpc-048398586e31d895e",
+        "SubnetGroupStatus": "Complete",
+        "Subnets": [
+          {
+            "SubnetIdentifier": "subnet-0873ed9dfc3c8e962",
+            "SubnetAvailabilityZone": {
+              "Name": "us-east-1b"
+            },
+            "SubnetOutpost": {},
+            "SubnetStatus": "Active"
+          },
+          {
+            "SubnetIdentifier": "subnet-097a4e54b0049e56c",
+            "SubnetAvailabilityZone": {
+              "Name": "us-east-1a"
+            },
+            "SubnetOutpost": {},
+            "SubnetStatus": "Active"
+          }
+        ]
+      },
+      "PreferredMaintenanceWindow": "sun:03:14-sun:03:44",
+      "PendingModifiedValues": {},
+      "LatestRestorableTime": "2025-05-12T19:20:00Z",
+      "MultiAZ": false,
+      "EngineVersion": "8.0.32",
+      "AutoMinorVersionUpgrade": true,
+      "ReadReplicaDBInstanceIdentifiers": [],
+      "LicenseModel": "general-public-license",
+      "OptionGroupMemberships": [
+        {
+          "OptionGroupName": "default:mysql-8-0",
+          "Status": "in-sync"
+        }
+      ],
+      "PubliclyAccessible": false,
+      "StorageType": "gp2",
+      "DbInstancePort": 0,
+      "StorageEncrypted": true,
+      "KmsKeyId": "arn:aws:kms:us-east-1:180116291619:key/760da15f-6165-41d8-8ad5-6bd300f0edf3",
+      "DbiResourceId": "db-PTCGTL7XDAZSGBOD326U73BLRE",
+      "CACertificateIdentifier": "rds-ca-rsa2048-g1",
+      "DomainMemberships": [],
+      "CopyTagsToSnapshot": true,
+      "MonitoringInterval": 0,
+      "DBInstanceArn": "arn:aws:rds:us-east-1:180116291619:db:flask-crud-db",
+      "IAMDatabaseAuthenticationEnabled": false,
+      "DatabaseInsightsMode": "standard",
+      "PerformanceInsightsEnabled": false,
+      "DeletionProtection": false,
+      "AssociatedRoles": [],
+      "MaxAllocatedStorage": 1000,
+      "TagList": [],
+      "CustomerOwnedIpEnabled": false,
+      "ActivityStreamStatus": "stopped",
+      "BackupTarget": "region",
+      "NetworkType": "IPV4",
+      "StorageThroughput": 0,
+      "CertificateDetails": {
+        "CAIdentifier": "rds-ca-rsa2048-g1",
+        "ValidTill": "2026-05-12T14:14:30Z"
+      },
+      "DedicatedLogVolume": false,
+      "IsStorageConfigUpgradeAvailable": false,
+      "EngineLifecycleSupport": "open-source-rds-extended-support-disabled"
+    }
+  ]
+}

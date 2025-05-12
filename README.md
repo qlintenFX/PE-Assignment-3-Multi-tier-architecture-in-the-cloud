@@ -615,6 +615,170 @@ aws elbv2 describe-load-balancers --names flask-app-alb --query 'LoadBalancers[0
      --db-instance-class db.t3.micro
    ```
 
+### Database Replication for High Availability
+
+Database replication has been implemented for improved reliability and high availability using Amazon RDS Multi-AZ deployment. This feature provides enhanced database availability by automatically creating a standby replica of the database in a different Availability Zone.
+
+#### Benefits of Multi-AZ Database Deployment
+
+1. **Enhanced Availability**: If the primary database instance fails, RDS automatically fails over to the standby replica, typically within 60-120 seconds.
+2. **Improved Reliability**: The standby replica is synchronously updated when the primary database is modified, ensuring data consistency.
+3. **Zero Downtime Maintenance**: Database patching and system upgrades can be performed on the standby instance first, then failed over, minimizing downtime.
+4. **Backup Improvement**: Backups are taken from the standby instance, reducing I/O freeze on the primary instance.
+
+#### Implementation Steps
+
+##### AWS Management Console
+
+1. Navigate to the RDS Dashboard in AWS Management Console
+2. Select the database instance (flask-crud-db)
+3. Click "Modify"
+4. Under "Multi-AZ deployment", select "Yes"
+5. Choose "Apply immediately" for the modifications to take effect right away
+6. Click "Modify DB Instance"
+
+##### AWS CLI
+
+```bash
+# Modify the existing RDS instance to enable Multi-AZ deployment
+aws rds modify-db-instance \
+  --db-instance-identifier flask-crud-db \
+  --multi-az \
+  --apply-immediately
+```
+
+During the modification process, the database remains available. AWS performs the following operations in the background:
+1. Takes a snapshot of the primary instance
+2. Creates a new standby instance in a different AZ from the snapshot
+3. Sets up synchronous replication between the primary and standby instances
+
+#### Failover Process
+
+Failover is automatically triggered in the following scenarios:
+- Loss of availability in the primary Availability Zone
+- Loss of network connectivity to the primary
+- Compute unit failure on the primary
+- Storage failure on the primary
+
+You can also initiate a manual failover for testing purposes by using the AWS Management Console or AWS CLI:
+
+```bash
+aws rds reboot-db-instance --db-instance-identifier flask-crud-db --force-failover
+```
+
+### Bastion Host Implementation
+
+A bastion host has been implemented to provide secure access to the database tier, which is located in a private subnet and not directly accessible from the public internet.
+
+#### What is a Bastion Host?
+
+A bastion host is a server that is designed to withstand attacks and provides a single point of entry into the private network. It is located in a public subnet and is accessible from the internet, but has strict security controls.
+
+#### Benefits of Using a Bastion Host
+
+1. **Enhanced Security**: Restricts direct access to your private resources
+2. **Centralized Access Control**: All database access flows through a single, auditable point
+3. **Reduced Attack Surface**: Only the bastion host is exposed to the internet, not your database
+4. **Detailed Logging**: Can log all access attempts and sessions for security auditing
+
+#### Architecture
+
+The bastion host is configured as follows:
+- EC2 instance running Amazon Linux 2
+- Located in a public subnet
+- Security group configured to only allow SSH (port 22) traffic from authorized IP addresses
+- The database security group is configured to accept connections only from the bastion host
+
+#### Implementation Steps
+
+##### AWS Management Console
+
+1. **Create Security Group for Bastion Host**:
+   - Navigate to EC2 > Security Groups
+   - Click "Create Security Group"
+   - Name: bastion-sg
+   - Description: Security group for bastion host
+   - VPC: Select your VPC (flask-vpc-1)
+   - Add inbound rule: Type: SSH, Source: Your IP address
+   - Click "Create"
+
+2. **Update Database Security Group**:
+   - Navigate to EC2 > Security Groups
+   - Select the database security group
+   - Click "Edit inbound rules"
+   - Add rule: Type: MySQL/Aurora, Source: bastion-sg (security group ID)
+   - Click "Save rules"
+
+3. **Launch Bastion Host**:
+   - Navigate to EC2 > Instances
+   - Click "Launch Instances"
+   - Name: flask-bastion-host
+   - Select Amazon Linux 2 AMI
+   - Instance type: t2.micro
+   - Key pair: Create or select existing key pair
+   - Network settings: Select your VPC and a public subnet
+   - Security group: Select the bastion-sg
+   - Click "Launch Instance"
+
+##### AWS CLI
+
+```bash
+# Create a security group for the bastion host
+aws ec2 create-security-group \
+  --group-name bastion-sg \
+  --description "Security group for bastion host" \
+  --vpc-id vpc-048398586e31d895e
+
+# Add SSH inbound rule to the bastion security group
+aws ec2 authorize-security-group-ingress \
+  --group-id sg-01ad369e4edff7cd8 \
+  --protocol tcp \
+  --port 22 \
+  --cidr 0.0.0.0/0
+
+# Update the database security group to allow access from bastion
+aws ec2 authorize-security-group-ingress \
+  --group-id sg-00e90afc8d7effe6f \
+  --protocol tcp \
+  --port 3306 \
+  --source-group sg-01ad369e4edff7cd8
+
+# Create a key pair for SSH access
+aws ec2 create-key-pair \
+  --key-name bastion-key \
+  --query "KeyMaterial" \
+  --output text > bastion-key.pem
+
+# Launch the bastion host EC2 instance
+aws ec2 run-instances \
+  --image-id ami-097947612b141c026 \
+  --count 1 \
+  --instance-type t2.micro \
+  --key-name bastion-key \
+  --security-group-ids sg-01ad369e4edff7cd8 \
+  --subnet-id subnet-0dec1e6783c40b2f1 \
+  --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=flask-bastion-host}]"
+```
+
+#### Accessing the Database Through the Bastion Host
+
+To access the RDS database through the bastion host:
+
+1. Connect to the bastion host using SSH:
+   ```bash
+   chmod 400 bastion-key.pem
+   ssh -i bastion-key.pem ec2-user@<bastion-host-public-ip>
+   ```
+
+2. From the bastion host, connect to the RDS database:
+   ```bash
+   mysql -h flask-crud-db.czyocqcwwzna.us-east-1.rds.amazonaws.com -u admin -p
+   ```
+
+3. When prompted, enter the database password.
+
+This secure access method ensures that your database remains in a private subnet with no public exposure, while still allowing authorized administrators to access it for management purposes.
+
 ## Further Improvements
 
 For even better security and reliability, consider implementing:

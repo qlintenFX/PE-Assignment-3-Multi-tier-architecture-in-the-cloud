@@ -69,6 +69,72 @@ The architecture consists of three primary tiers:
 
 ### 1. VPC and Network Setup
 
+#### Using AWS Management Console
+
+**1. Create a VPC**
+
+1. Navigate to the VPC service in the AWS Management Console
+2. Click "Create VPC"
+3. Select "VPC and more" to create a VPC with subnets, route tables, and other components
+4. Configure the following settings:
+   - Name tag: `flask-app-vpc`
+   - IPv4 CIDR block: `10.0.0.0/16`
+   - Number of Availability Zones: `2` (select us-east-1a and us-east-1b)
+   - Number of public subnets: `2`
+   - Number of private subnets: `4` (2 for application tier, 2 for database tier)
+   - NAT gateways: `1 per AZ` for outbound internet access from private subnets
+   - VPC endpoints: None (for this basic setup)
+5. Review your configuration and click "Create VPC"
+
+**2. Rename Subnets for Better Organization**
+
+1. After VPC creation, go to the "Subnets" section
+2. For each subnet, select it and click "Actions" → "Edit subnet settings"
+3. Update names according to their purpose:
+   - Public subnets: `public-subnet-1a`, `public-subnet-1b`
+   - Private app subnets: `private-app-subnet-1a`, `private-app-subnet-1b`
+   - Private DB subnets: `private-db-subnet-1a`, `private-db-subnet-1b`
+
+**3. Configure Route Tables**
+
+1. Go to "Route Tables" section
+2. Identify the route tables created with your VPC
+3. For each route table, select it and click "Actions" → "Edit route table settings"
+4. Rename them according to their purpose:
+   - Public route table: `public-rt`
+   - Private app route table: `private-app-rt`
+   - Private DB route table: `private-db-rt`
+5. Verify routes are correctly configured:
+   - Public RT should have a route to the Internet Gateway for 0.0.0.0/0
+   - Private App RT should have a route to the NAT Gateway for 0.0.0.0/0
+   - Private DB RT should only have local routes within the VPC
+
+**4. Create Security Groups**
+
+1. Go to "Security Groups" section
+2. Click "Create security group"
+3. Create the ALB security group:
+   - Name: `alb-sg`
+   - Description: "Security group for ALB"
+   - VPC: Select your `flask-app-vpc`
+   - Inbound rules: Add rule for HTTP (80) from Anywhere (0.0.0.0/0)
+   - Outbound rules: Leave as default (All traffic)
+4. Click "Create security group"
+5. Repeat to create the App security group:
+   - Name: `app-sg`
+   - Description: "Security group for application servers"
+   - VPC: Select your `flask-app-vpc`
+   - Inbound rules: Add rule for TCP (8000) from the ALB security group
+   - Outbound rules: Leave as default (All traffic)
+6. Repeat to create the DB security group:
+   - Name: `db-sg`
+   - Description: "Security group for database"
+   - VPC: Select your `flask-app-vpc`
+   - Inbound rules: Add rule for MySQL (3306) from the App security group
+   - Outbound rules: Remove all rules for maximum security
+
+#### Using AWS CLI
+
 1. Create a new VPC with CIDR block 10.0.0.0/16
    
    ```bash
@@ -105,50 +171,55 @@ The architecture consists of three primary tiers:
    aws ec2 create-nat-gateway --subnet-id subnet-**** --allocation-id eipalloc-**** --tag-specifications 'ResourceType=natgateway,Tags=[{Key=Name,Value=flask-app-natgw}]'
    ```
 
-5. Create and configure route tables
-   
-   ```bash
-   # Create public route table
-   aws ec2 create-route-table --vpc-id vpc-**** --tag-specifications 'ResourceType=route-table,Tags=[{Key=Name,Value=public-rt}]'
-   aws ec2 create-route --route-table-id rtb-**** --destination-cidr-block 0.0.0.0/0 --gateway-id igw-****
-   
-   # Associate public subnets with public route table
-   aws ec2 associate-route-table --route-table-id rtb-**** --subnet-id subnet-**** # Public subnet 1
-   aws ec2 associate-route-table --route-table-id rtb-**** --subnet-id subnet-**** # Public subnet 2
-   
-   # Create private app route table
-   aws ec2 create-route-table --vpc-id vpc-**** --tag-specifications 'ResourceType=route-table,Tags=[{Key=Name,Value=private-app-rt}]'
-   aws ec2 create-route --route-table-id rtb-**** --destination-cidr-block 0.0.0.0/0 --nat-gateway-id nat-****
-   
-   # Associate private app subnets with private app route table
-   aws ec2 associate-route-table --route-table-id rtb-**** --subnet-id subnet-**** # Private app subnet 1
-   aws ec2 associate-route-table --route-table-id rtb-**** --subnet-id subnet-**** # Private app subnet 2
-   
-   # Create private DB route table
-   aws ec2 create-route-table --vpc-id vpc-**** --tag-specifications 'ResourceType=route-table,Tags=[{Key=Name,Value=private-db-rt}]'
-   
-   # Associate private DB subnets with private DB route table
-   aws ec2 associate-route-table --route-table-id rtb-**** --subnet-id subnet-**** # Private DB subnet 1
-   aws ec2 associate-route-table --route-table-id rtb-**** --subnet-id subnet-**** # Private DB subnet 2
-   ```
+5. Create and configure route tables (as shown in original CLI commands)
 
-6. Create security groups
-   
-   ```bash
-   # ALB security group
-   aws ec2 create-security-group --group-name alb-sg --description "Security group for ALB" --vpc-id vpc-****
-   aws ec2 authorize-security-group-ingress --group-id sg-**** --protocol tcp --port 80 --cidr 0.0.0.0/0
-   
-   # App security group
-   aws ec2 create-security-group --group-name app-sg --description "Security group for application servers" --vpc-id vpc-****
-   aws ec2 authorize-security-group-ingress --group-id sg-**** --protocol tcp --port 8000 --source-group sg-**** # ALB SG
-   
-   # DB security group
-   aws ec2 create-security-group --group-name db-sg --description "Security group for database" --vpc-id vpc-****
-   aws ec2 authorize-security-group-ingress --group-id sg-**** --protocol tcp --port 3306 --source-group sg-**** # App SG
-   ```
+6. Create security groups (as shown in original CLI commands)
 
 ### 2. Database Tier Setup
+
+#### Using AWS Management Console
+
+**1. Create DB Subnet Group**
+
+1. Navigate to the Amazon RDS service in the AWS Management Console
+2. In the left navigation pane, click "Subnet groups"
+3. Click "Create DB subnet group"
+4. Configure the following settings:
+   - Name: `flask-db-subnet-group`
+   - Description: "Subnet group for Flask app database"
+   - VPC: Select your `flask-app-vpc`
+   - Availability zones: Select both AZs (us-east-1a and us-east-1b)
+   - Subnets: Select your private DB subnets
+5. Click "Create"
+
+**2. Create RDS MySQL Instance**
+
+1. In the RDS dashboard, click "Create database"
+2. Choose "Standard create" and select MySQL as the database engine
+3. Configure basic settings:
+   - Engine Version: MySQL 8.0.32 (or latest available)
+   - Templates: Production
+   - DB instance identifier: `flask-crud-db`
+   - Master username: `admin`
+   - Master password: Create a secure password
+4. Configure instance specifications:
+   - DB instance class: Burstable classes (t3.micro)
+   - Storage: 20 GB (General Purpose SSD)
+   - Enable storage autoscaling
+5. Configure connectivity:
+   - VPC: Select your `flask-app-vpc`
+   - Subnet group: Select `flask-db-subnet-group`
+   - Public access: No
+   - VPC security group: Select the `db-sg` security group
+   - Availability Zone: No preference
+6. Additional configuration:
+   - Initial database name: `flaskcrud`
+   - Backup: Enable automatic backups with 7-day retention
+   - Monitoring: Enable Enhanced monitoring (optional)
+   - Maintenance: Enable auto minor version upgrade
+7. Click "Create database"
+
+#### Using AWS CLI
 
 1. Create a DB subnet group for RDS
    
@@ -185,137 +256,34 @@ The architecture consists of three primary tiers:
 
 ### 3. Application Tier Setup
 
-1. Modify the Flask application code to connect to the RDS database
+#### Using AWS Management Console
 
-   Edit the `flask-app/app/config.py` file:
-   
-   ```python
-   import os
-   basedir = os.path.abspath(os.path.dirname(__file__))
-   
-   class Config(object):
-       SECRET_KEY = os.environ.get('SECRET_KEY') or 'do-or-do-not-there-is-no-try'
-       SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
-       SQLALCHEMY_TRACK_MODIFICATIONS = False
-   ```
+**1. Modify Flask Application Code**
 
-2. Add ProxyFix middleware for proper handling of client IPs behind ALB
+1. As shown in the CLI section, update the `config.py` file
+2. Create the `wsgi.py` file for ProxyFix middleware
+3. Create the Dockerfile and entrypoint.sh script
 
-   Create `flask-app/wsgi.py` file:
-   
-   ```python
-   from app import app
-   from werkzeug.middleware.proxy_fix import ProxyFix
-   
-   # Apply ProxyFix middleware to handle X-Forwarded-* headers from the load balancer
-   app.wsgi_app = ProxyFix(
-       app.wsgi_app,
-       x_for=1,        # Number of proxies setting X-Forwarded-For
-       x_proto=1,      # Number of proxies setting X-Forwarded-Proto
-       x_host=1,       # Number of proxies setting X-Forwarded-Host
-       x_port=1,       # Number of proxies setting X-Forwarded-Port
-       x_prefix=0      # Number of proxies setting X-Forwarded-Prefix
-   )
-   
-   if __name__ == "__main__":
-       app.run()
-   ```
+**2. Build and Push Docker Image**
 
-3. Create a Dockerfile for the application
-   
-   ```Dockerfile
-   FROM python:3.9-slim
-   
-   WORKDIR /app
-   
-   COPY requirements.txt .
-   RUN pip install --no-cache-dir -r requirements.txt
-   
-   COPY . .
-   
-   # Create an entrypoint script
-   COPY docker/entrypoint.sh /entrypoint.sh
-   RUN chmod +x /entrypoint.sh
-   
-   EXPOSE 8000
-   
-   ENTRYPOINT ["/entrypoint.sh"]
-   ```
+1. Build the Docker image locally as shown in the CLI section
+2. Navigate to the Amazon ECR service in the AWS Management Console
+3. Click "Create repository"
+4. Enter repository name: `flask-crud-app`
+5. Keep other settings as default and click "Create repository"
+6. Click on your newly created repository
+7. Click "View push commands"
+8. Follow the displayed commands to authenticate Docker, tag, and push your image
 
-4. Create an entrypoint script for the container
-   
-   Create `flask-app/docker/entrypoint.sh`:
-   
-   ```bash
-   #!/bin/bash
-   
-   # Print environment variables for debugging (excluding secrets)
-   echo "Environment variables:"
-   env | grep -v SECRET_KEY | grep -v DATABASE_URL
-   
-   # Database connection string (without password for logging)
-   DB_CONNECTION=$(echo $DATABASE_URL | sed 's/:[^:]*@/:***@/')
-   echo "Database connection string: $DB_CONNECTION"
-   
-   # Initialize the database
-   echo "Initializing database..."
-   
-   # Attempt multiple times to initialize the database
-   max_attempts=10
-   attempt_count=0
-   success=false
-   
-   while [ $attempt_count -lt $max_attempts ] && [ "$success" = false ]; do
-     attempt_count=$((attempt_count+1))
-     echo "Attempt $attempt_count of $max_attempts..."
-     
-     # Try to initialize the database
-     python << EOF
-   from app import db
-   from app.models import Entry
-   
-   try:
-       # Connect to the database
-       connection = db.engine.connect()
-       connection.close()
-       print("Database connection successful!")
-       
-       # Check if tables exist
-       connection = db.engine.connect()
-       tables = connection.execute("SHOW TABLES").fetchall()
-       table_names = [table[0] for table in tables]
-       print(f"Existing tables: {table_names}")
-       connection.close()
-       
-       # Create tables if they don't exist
-       print("Creating tables if needed...")
-       db.create_all()
-       print("Tables created successfully!")
-   except Exception as e:
-       import traceback
-       print(f"Database initialization error: {e}")
-       traceback.print_exc()
-       exit(1)
-   EOF
-     
-     if [ $? -eq 0 ]; then
-       success=true
-       echo "Database initialization successful!"
-     else
-       echo "Database initialization failed, retrying in 5 seconds..."
-       sleep 5
-     fi
-   done
-   
-   if [ "$success" = false ]; then
-     echo "Failed to initialize database after $max_attempts attempts. Exiting."
-     exit 1
-   fi
-   
-   # Start Gunicorn WSGI server
-   echo "Starting Gunicorn WSGI server..."
-   exec gunicorn --bind 0.0.0.0:8000 --workers=2 wsgi:app
-   ```
+#### Using AWS CLI
+
+1. Modify the Flask application code to connect to the RDS database (as shown in original CLI commands)
+
+2. Add ProxyFix middleware (as shown in original CLI commands)
+
+3. Create a Dockerfile for the application (as shown in original CLI commands)
+
+4. Create an entrypoint script for the container (as shown in original CLI commands)
 
 5. Build and tag the Docker image
    
@@ -342,131 +310,137 @@ The architecture consists of three primary tiers:
 
 ### 4. ECS Fargate Setup
 
+#### Using AWS Management Console
+
+**1. Create ECS Cluster**
+
+1. Navigate to the Amazon ECS service in the AWS Management Console
+2. Click "Clusters" in the left navigation pane
+3. Click "Create Cluster"
+4. Select "Networking only" as the cluster template (for Fargate)
+5. Configure basic settings:
+   - Cluster name: `flask-app-cluster`
+   - Tags: Add Name tag if desired
+6. Click "Create"
+
+**2. Create Task Definition**
+
+1. In the ECS dashboard, click "Task Definitions" in the left navigation pane
+2. Click "Create new Task Definition"
+3. Select "Fargate" as the launch type and click "Next step"
+4. Configure basic settings:
+   - Task Definition Name: `flask-app-task`
+   - Task Role: `ecsTaskExecutionRole`
+   - Task execution role: `ecsTaskExecutionRole`
+   - Task memory: 0.5GB (512MB)
+   - Task CPU: 0.25 vCPU (256)
+5. Add a container:
+   - Container name: `flask-app`
+   - Image: Enter your ECR image URI
+   - Memory Limits: Soft limit of 512MB
+   - Port mappings: Add 8000 for container port
+   - Environment variables: Add DATABASE_URL and SECRET_KEY
+   - Configure CloudWatch Logs:
+     - Log configuration: awslogs
+     - Log group: `/ecs/flask-app`
+     - Region: us-east-1
+     - Auto-create: Yes
+     - Stream prefix: ecs
+6. Click "Add" to add the container, then "Create" to create the task definition
+
+**3. Create Application Load Balancer**
+
+1. Navigate to the EC2 service
+2. Click "Load Balancers" in the left navigation pane
+3. Click "Create Load Balancer"
+4. Select "Application Load Balancer"
+5. Configure basic settings:
+   - Name: `flask-app-alb`
+   - Scheme: internet-facing
+   - IP address type: ipv4
+   - Listeners: HTTP on port 80
+   - Availability Zones: Select your VPC and check both public subnets
+6. Configure Security Settings (skip for HTTP only)
+7. Configure Security Groups:
+   - Select the `alb-sg` security group you created earlier
+8. Configure Routing:
+   - Target group: New target group
+   - Name: `flask-app-tg`
+   - Target type: IP
+   - Protocol: HTTP
+   - Port: 8000
+   - Health checks: 
+     - Path: `/`
+     - Advanced settings: customize if needed
+9. Skip target registration (ECS will register targets)
+10. Review and create the load balancer
+
+**4. Create ECS Service**
+
+1. Go back to the ECS service
+2. Select your `flask-app-cluster`
+3. Click the "Services" tab, then "Create"
+4. Configure basic service settings:
+   - Launch type: FARGATE
+   - Task Definition: Select your `flask-app-task`
+   - Service name: `flask-app-service`
+   - Number of tasks: 2
+   - Deployment type: Rolling update
+   - Enable deployment circuit breaker with rollback
+5. Configure networking:
+   - VPC: Select your `flask-app-vpc`
+   - Subnets: Select your private app subnets
+   - Security groups: Select the `app-sg` security group
+   - Auto-assign public IP: DISABLED
+6. Configure load balancing:
+   - Load balancer type: Application Load Balancer
+   - Load balancer: Select your `flask-app-alb`
+   - Target group: Select your `flask-app-tg`
+   - Container port: 8000
+7. Skip Auto Scaling for now (we'll add it later)
+8. Review and create the service
+
+#### Using AWS CLI
+
 1. Create an ECS cluster
    
    ```bash
    aws ecs create-cluster --cluster-name flask-app-cluster
    ```
 
-2. Create a task definition for the Flask application
-   
-   ```bash
-   cat << EOF > task-definition.json
-   {
-     "family": "flask-app-task",
-     "networkMode": "awsvpc",
-     "executionRoleArn": "arn:aws:iam::$(aws sts get-caller-identity --query Account --output text):role/ecsTaskExecutionRole",
-     "containerDefinitions": [
-       {
-         "name": "flask-app",
-         "image": "$(aws sts get-caller-identity --query Account --output text).dkr.ecr.us-east-1.amazonaws.com/flask-crud-app:latest",
-         "essential": true,
-         "environment": [
-           {
-             "name": "DATABASE_URL",
-             "value": "mysql+pymysql://admin:<password>@<rds-endpoint>:3306/flaskcrud"
-           },
-           {
-             "name": "SECRET_KEY",
-             "value": "<random-secret-key>"
-           }
-         ],
-         "portMappings": [
-           {
-             "containerPort": 8000,
-             "hostPort": 8000,
-             "protocol": "tcp"
-           }
-         ],
-         "logConfiguration": {
-           "logDriver": "awslogs",
-           "options": {
-             "awslogs-group": "/ecs/flask-app",
-             "awslogs-region": "us-east-1",
-             "awslogs-stream-prefix": "ecs",
-             "awslogs-create-group": "true"
-           }
-         }
-       }
-     ],
-     "requiresCompatibilities": ["FARGATE"],
-     "cpu": "256",
-     "memory": "512"
-   }
-   EOF
-   
-   # Register the task definition
-   aws ecs register-task-definition --cli-input-json file://task-definition.json
-   ```
+2. Create a task definition for the Flask application (as shown in original CLI commands)
 
-3. Create a load balancer
-   
-   ```bash
-   # Create an ALB
-   aws elbv2 create-load-balancer \
-     --name flask-app-alb \
-     --subnets subnet-**** subnet-**** \
-     --security-groups sg-**** \
-     --type application
-   
-   # Create a target group
-   aws elbv2 create-target-group \
-     --name flask-app-tg \
-     --protocol HTTP \
-     --port 8000 \
-     --vpc-id vpc-**** \
-     --target-type ip \
-     --health-check-path "/" \
-     --health-check-interval-seconds 30 \
-     --health-check-timeout-seconds 5 \
-     --healthy-threshold-count 2 \
-     --unhealthy-threshold-count 2
-   
-   # Create a listener
-   aws elbv2 create-listener \
-     --load-balancer-arn arn:aws:elasticloadbalancing:us-east-1:$(aws sts get-caller-identity --query Account --output text):loadbalancer/app/flask-app-alb/**** \
-     --protocol HTTP \
-     --port 80 \
-     --default-actions Type=forward,TargetGroupArn=arn:aws:elasticloadbalancing:us-east-1:$(aws sts get-caller-identity --query Account --output text):targetgroup/flask-app-tg/****
-   ```
+3. Create a load balancer (as shown in original CLI commands)
 
-4. Create an ECS service
-   
-   ```bash
-   aws ecs create-service \
-     --cluster flask-app-cluster \
-     --service-name flask-app-service \
-     --task-definition flask-app-task:1 \
-     --desired-count 2 \
-     --launch-type FARGATE \
-     --network-configuration "awsvpcConfiguration={subnets=[subnet-****,subnet-****],securityGroups=[sg-****],assignPublicIp=DISABLED}" \
-     --load-balancers "targetGroupArn=arn:aws:elasticloadbalancing:us-east-1:$(aws sts get-caller-identity --query Account --output text):targetgroup/flask-app-tg/****,containerName=flask-app,containerPort=8000" \
-     --deployment-configuration "deploymentCircuitBreaker={enable=true,rollback=true}"
-   ```
+4. Create an ECS service (as shown in original CLI commands)
 
 ### 5. Monitoring and Logging
 
-1. View application logs in CloudWatch
-   
-   ```bash
-   aws logs describe-log-groups --log-group-name-prefix /ecs/flask-app
-   
-   aws logs describe-log-streams \
-     --log-group-name /ecs/flask-app \
-     --order-by LastEventTime \
-     --descending
-     
-   aws logs get-log-events \
-     --log-group-name /ecs/flask-app \
-     --log-stream-name <log-stream-name> \
-     --limit 20
-   ```
+#### Using AWS Management Console
 
-2. Monitor the service health
-   
-   ```bash
-   aws ecs describe-services --cluster flask-app-cluster --services flask-app-service
-   ```
+**1. View CloudWatch Logs**
+
+1. Navigate to the CloudWatch service in the AWS Management Console
+2. Click "Log groups" in the left navigation pane
+3. Find and select the `/ecs/flask-app` log group
+4. Browse through log streams to view application logs
+5. Select a specific log stream to see detailed logs
+
+**2. Monitor ECS Service Health**
+
+1. Navigate to the ECS service
+2. Select your `flask-app-cluster`
+3. Click the "Services" tab
+4. Select your `flask-app-service`
+5. Review the "Health and metrics" tab to see service status
+6. Check the "Events" tab for deployment events and issues
+7. Check the "Tasks" tab to see running tasks and their status
+
+#### Using AWS CLI
+
+1. View application logs in CloudWatch (as shown in original CLI commands)
+
+2. Monitor the service health (as shown in original CLI commands)
 
 ## Application Access
 
@@ -476,7 +450,10 @@ You can access the Flask CRUD application via the ALB DNS name:
 http://<alb-dns-name>
 ```
 
-Replace `<alb-dns-name>` with the actual DNS name of your ALB, which can be retrieved using the following command:
+To find your ALB DNS name:
+
+1. **AWS Management Console**: Navigate to EC2 → Load Balancers → Select your ALB → Copy the DNS name
+2. **AWS CLI**: Use the command below
 
 ```bash
 aws elbv2 describe-load-balancers --names flask-app-alb --query 'LoadBalancers[0].DNSName' --output text
@@ -519,7 +496,23 @@ aws elbv2 describe-load-balancers --names flask-app-alb --query 'LoadBalancers[0
 
 ### 1. HTTPS Support with Certificate Manager
 
-For enhanced security, HTTPS was implemented using AWS Certificate Manager:
+#### Using AWS Management Console
+
+1. Navigate to AWS Certificate Manager
+2. Click "Request a certificate"
+3. Select "Request a public certificate" and click "Next"
+4. Enter your domain name(s) and click "Next"
+5. Choose DNS validation or email validation
+6. Add tags if desired and click "Request"
+7. Complete validation process
+8. Once validated, go to EC2 → Load Balancers → Select your ALB
+9. Add a listener on port 443 with HTTPS protocol
+10. Select your certificate
+11. Configure the default action to forward to your target group
+12. Save the new listener
+13. Edit the HTTP (port 80) listener to redirect to HTTPS
+
+#### Using AWS CLI
 
 1. Create a certificate in AWS Certificate Manager
    
@@ -548,7 +541,20 @@ For enhanced security, HTTPS was implemented using AWS Certificate Manager:
 
 ### 2. Auto Scaling for Application Tier
 
-To improve reliability and handle varying loads, auto scaling was configured:
+#### Using AWS Management Console
+
+1. Navigate to ECS → Clusters → Select your cluster
+2. Select your service and click "Update"
+3. In the "Service Auto Scaling" section, click "Configure Service Auto Scaling"
+4. Set the minimum, desired, and maximum number of tasks
+5. Configure scaling policies:
+   - Add a policy for CPU utilization
+   - Target value: 70%
+   - Scale-out cooldown: 60 seconds
+   - Scale-in cooldown: 60 seconds
+6. Save the auto scaling configuration
+
+#### Using AWS CLI
 
 1. Create an auto scaling target
    
@@ -575,7 +581,21 @@ To improve reliability and handle varying loads, auto scaling was configured:
 
 ### 3. Database Backup and Recovery
 
-For enhanced data protection:
+#### Using AWS Management Console
+
+1. Navigate to RDS → Databases → Select your database
+2. Click "Modify"
+3. Under "Backup", set the backup retention period to 7 days
+4. Select "Apply immediately" for the modifications
+5. Click "Modify DB Instance"
+6. To create a read replica:
+   - Select your database instance
+   - Click "Actions" → "Create read replica"
+   - Configure instance specifications (t3.micro)
+   - Configure other settings as needed
+   - Click "Create read replica"
+
+#### Using AWS CLI
 
 1. Enable automated backups with a 7-day retention period
    
@@ -609,6 +629,30 @@ For even better security and reliability, consider implementing:
 ## Troubleshooting
 
 If you encounter issues with the deployment, check the following:
+
+### Using AWS Management Console
+
+1. **ECS Service Status**:
+   - Navigate to ECS → Clusters → Select your cluster
+   - Check the "Services" tab and verify the service is running
+   - Look for any deployment failures or stopped tasks
+
+2. **CloudWatch Logs**:
+   - Navigate to CloudWatch → Log groups → /ecs/flask-app
+   - Select the most recent log stream
+   - Review logs for error messages
+
+3. **Target Group Health**:
+   - Navigate to EC2 → Target Groups → Select your target group
+   - Check the "Targets" tab to see health status
+   - Look for any unhealthy targets and investigate
+
+4. **Database Connectivity**:
+   - Navigate to RDS → Databases
+   - Verify your database is in "Available" state
+   - Check security group rules to ensure proper connectivity
+
+### Using AWS CLI
 
 1. **ECS Service Status**:
    ```bash

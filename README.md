@@ -65,7 +65,7 @@ I will demonstrate the working application during the evaluation.
 
 For secure access to the private RDS database, I've implemented a bastion host in the public subnet:
 
-![Bastion Host Architecture](https://docs.aws.amazon.com/vpc/latest/userguide/images/bastion-instance.png)
+[View Detailed Bastion Host Architecture](bastion-instance.md)
 
 The bastion host:
 - Runs Amazon Linux 2

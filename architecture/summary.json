@@ -1,0 +1,30 @@
+{
+  "application": "Flask CRUD App",
+  "components": {
+    "ecs_cluster": "flask-app-cluster",
+    "ecs_service": "flask-app-service",
+    "task_definition": "flask-app-task",
+    "load_balancer": "flask-app-alb",
+    "target_group": "flask-app-tg",
+    "database": "flask-crud-db.czyocqcwwzna.us-east-1.rds.amazonaws.com",
+    "domain": "flask.quinten-de-meyer.be"
+  },
+  "features": {
+    "https": true,
+    "dns_validation": true,
+    "auto_scaling": true,
+    "load_balancing": true
+  },
+  "exported_files": [
+    "architecture/ecs_cluster.json",
+    "architecture/ecs_service.json",
+    "architecture/task_definition.json",
+    "architecture/load_balancer.json",
+    "architecture/target_groups.json",
+    "architecture/target_health.json",
+    "architecture/rds_instance.json",
+    "architecture/security_groups.json",
+    "architecture/ssl_certificate.json",
+    "architecture/listeners.json"
+  ]
+} 

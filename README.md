@@ -842,4 +842,16 @@ If you encounter issues with the deployment, check the following:
 
 ## Conclusion
 
-This multi-tier architecture provides a secure, scalable, and reliable platform for hosting the Flask CRUD application. By following the principles of separation of concerns and defense in depth, the architecture ensures that each tier is isolated and secured appropriately. The use of managed services reduces operational overhead while maintaining high availability and performance. 
+This multi-tier architecture provides a secure, scalable, and reliable platform for hosting the Flask CRUD application. By following the principles of separation of concerns and defense in depth, the architecture ensures that each tier is isolated and secured appropriately. The use of managed services reduces operational overhead while maintaining high availability and performance.
+
+## HTTPS Configuration
+
+The application has been configured with HTTP to HTTPS redirection for enhanced security:
+
+1. The Application Load Balancer is set up to redirect HTTP (port 80) requests to HTTPS (port 443)
+2. The ALB Security Group allows both HTTP and HTTPS traffic
+
+To complete the HTTPS setup, you need to add a valid SSL certificate. See [HTTPS Setup Instructions](https-instructions.md) for detailed steps to:
+- Request a valid certificate for your domain
+- Configure the HTTPS listener
+- Set up domain routing with Route 53 

@@ -6,30 +6,7 @@ This project implements a scalable and secure multi-tier architecture for a Flas
 ## Architecture Design
 
 ### Architecture Diagram
-```
-                                        Internet
-                                           │
-                                           ▼
-                                     ┌──────────┐
-                                     │   ALB    │
-                                     │(Public   │
-                                     │ Subnet)  │
-                                     └────┬─────┘
-                                          │
-                                          ▼
-┌───────────────┐                  ┌──────────┐
-│ Bastion Host  │◄────────────────►│ECS Fargate│
-│(Public Subnet)│                  │(Private   │
-└───────┬───────┘                  │ Subnet)   │
-        │                          └────┬──────┘
-        │                               │
-        │                               ▼
-        │                          ┌──────────┐
-        └─────────────────────────►│   RDS    │
-                                   │(Private   │
-                                   │ Subnet)   │
-                                   └──────────┘
-```
+![Multi-tier Architecture Diagram](diagramOpdracht3.png)
 
 ### Security Groups Configuration
 
@@ -73,8 +50,8 @@ This project implements a scalable and secure multi-tier architecture for a Flas
 
 ### Additional Features
 - **HTTPS**: Implemented with an ACM certificate and HTTP to HTTPS redirection for secure data transmission.
+- **Multi-AZ Database Replication**: Implemented database replication across multiple availability zones for improved reliability and fault tolerance.
 - **Bastion Host**: Provides secure SSH access to the private subnets for administration purposes.
-- **CloudWatch Integration**: All components send logs to CloudWatch for centralized monitoring.
 
 ## Accessing the Application
 
@@ -106,7 +83,7 @@ I will demonstrate the working application during the evaluation.
    - DB identifier: flask-crud-db
    - Engine: MySQL 8.0
    - Instance class: db.t2.micro
-   - Multi-AZ: No (Free tier)
+   - Multi-AZ: Yes (for improved reliability)
    - Initial database name: flaskcrud
    - Security group: flask-db-sg
    - Subnet group: Private subnets
@@ -188,7 +165,7 @@ aws ec2 create-tags --resources $DB_SG_ID --tags Key=Name,Value=flask-db-sg
 # Create DB Subnet Group
 aws rds create-db-subnet-group --db-subnet-group-name flask-db-subnet-group --db-subnet-group-description "Subnet group for Flask app database" --subnet-ids $PRIVATE_SUBNET1_ID $PRIVATE_SUBNET2_ID
 
-# Create RDS Instance
+# Create RDS Instance with Multi-AZ
 aws rds create-db-instance \
     --db-instance-identifier flask-crud-db \
     --db-name flaskcrud \
@@ -199,6 +176,7 @@ aws rds create-db-instance \
     --allocated-storage 20 \
     --vpc-security-group-ids $DB_SG_ID \
     --db-subnet-group-name flask-db-subnet-group \
+    --multi-az \
     --no-publicly-accessible
 
 # 3. Middle Tier

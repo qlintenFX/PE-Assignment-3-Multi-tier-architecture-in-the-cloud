@@ -61,6 +61,56 @@ The deployed application is accessible at:
 
 I will demonstrate the working application during the evaluation.
 
+## Database Access via Bastion Host
+
+For secure access to the private RDS database, I've implemented a bastion host in the public subnet:
+
+![Bastion Host Architecture](https://docs.aws.amazon.com/vpc/latest/userguide/images/bastion-instance.png)
+
+The bastion host:
+- Runs Amazon Linux 2
+- Is located in public subnet (10.0.1.0/24)
+- Has IP: 54.159.110.150
+- Allows SSH access with the labsuser.pem key
+
+### Database Query Script
+
+I've created a PowerShell script `show_database.ps1` that provides easy access to the database:
+
+```powershell
+# Command to access database contents
+.\show_database.ps1
+```
+
+Output from the script:
+```
+===== CONNECTING TO DATABASE VIA BASTION HOST =====
+
+=================== DATABASES ===================
+Database
+flaskcrud
+information_schema
+mysql
+performance_schema
+sys
+=================== TABLES IN flaskcrud ===================
+Tables_in_flaskcrud
+entry
+=================== TABLE STRUCTURE ===================
+Field   Type    Null    Key     Default Extra
+id      int     NO      PRI     NULL    auto_increment
+title   varchar(64)     NO      MUL     NULL
+description     varchar(120)    NO      MUL     NULL
+status  tinyint(1)      YES             NULL
+=================== TABLE DATA ===================
+id      title   description     status
+4       dzqdzdzq        dzqdqz  1
+5       test    test    0
+7       bling bling     wwowowwww       1
+```
+
+This script establishes an SSH connection to the bastion host, which then connects to the RDS instance in the private subnet. This maintains the security of our database while allowing authorized administrative access.
+
 ## Implementation Guide
 
 ### AWS Management Console Implementation

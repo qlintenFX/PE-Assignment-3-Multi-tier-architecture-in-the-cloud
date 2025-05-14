@@ -1,7 +1,7 @@
 # SECURITY WARNING: This script contains database credentials.
 # For production use, consider using environment variables or a secure vault.
 # Database connection info
-$BASTION_HOST="98.83.119.96"
+$BASTION_HOST="3.92.145.32"
 $KEY_FILE="labsuser.pem"
 $DB_HOST="flask-crud-db.czyocqcwwzna.us-east-1.rds.amazonaws.com"
 $DB_USER="admin"
@@ -32,6 +32,17 @@ try {
     
     if ($sshProcess.ExitCode -ne 0) {
         Write-Host "SSH connection failed with exit code $($sshProcess.ExitCode)" -ForegroundColor Red
+        
+        # Try the third IP (vockey instance)
+        $BASTION_HOST="107.22.104.48"
+        Write-Host "Trying alternate bastion host at $BASTION_HOST..." -ForegroundColor Yellow
+        $sshProcess = Start-Process -FilePath "ssh" -ArgumentList "-i $KEY_FILE -o ConnectTimeout=10 -o StrictHostKeyChecking=no ec2-user@$BASTION_HOST $command" -NoNewWindow -PassThru -Wait
+        
+        if ($sshProcess.ExitCode -ne 0) {
+            Write-Host "All connection attempts failed" -ForegroundColor Red
+        } else {
+            Write-Host "`n===== DATABASE QUERY COMPLETE =====`n" -ForegroundColor Green
+        }
     } else {
         Write-Host "`n===== DATABASE QUERY COMPLETE =====`n" -ForegroundColor Green
     }

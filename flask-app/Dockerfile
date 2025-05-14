@@ -6,8 +6,8 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Install Gunicorn
-RUN pip install --no-cache-dir gunicorn
+# Install Gunicorn and python-dotenv
+RUN pip install --no-cache-dir gunicorn python-dotenv
 
 # Copy the application
 COPY . .
@@ -17,8 +17,8 @@ COPY docker/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
 # Set environment variables
-ENV PYTHONUNBUFFERED 1
-ENV FLASK_APP crudapp.py
+ENV PYTHONUNBUFFERED=1
+ENV FLASK_APP=wsgi.py
 
 # Expose port 8000
 EXPOSE 8000

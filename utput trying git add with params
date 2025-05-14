@@ -1,0 +1,283 @@
+[1mdiff --git a/README.md b/README.md[m
+[1mindex 4dcc05b..283d2df 100644[m
+[1m--- a/README.md[m
+[1m+++ b/README.md[m
+[36m@@ -21,24 +21,31 @@[m [mThis project implements a scalable and secure multi-tier architecture for a Flas[m
+ [m
+ | Route Table | Associated Subnets | Routes |[m
+ |-------------|-------------------|--------|[m
+[31m-| flask-app-public-rt | Public Subnets (10.0.1.0/24, 10.0.2.0/24) | Local VPC CIDR, 0.0.0.0/0 → Internet Gateway |[m
+[31m-| flask-app-private-rt | Private Subnets (10.0.3.0/24, 10.0.4.0/24) | Local VPC CIDR, 0.0.0.0/0 → NAT Gateway |[m
+[32m+[m[32m| flask-public-rtb (rtb-0518fa459a4c60e8e) | Public Subnets (10.0.1.0/24, 10.0.2.0/24) | Local VPC CIDR, 0.0.0.0/0 → Internet Gateway |[m
+[32m+[m[32m| flask-rtb-1 (rtb-00a0e06aa7eb862d7) | Private App Subnets (10.0.3.0/24, 10.0.4.0/24) | Local VPC CIDR, 0.0.0.0/0 → NAT Gateway |[m
+[32m+[m[32m| flask-db-rt-1 (rtb-08604774e031a077a) | Database Subnets (10.0.5.0/24, 10.0.6.0/24) | Local VPC CIDR |[m
+ [m
+ ### IP Addressing[m
+ [m
+ | Component | CIDR Block / Address |[m
+ |-----------|----------------------|[m
+ | VPC | 10.0.0.0/16 |[m
+[31m-| Public Subnet 1 | 10.0.1.0/24 |[m
+[31m-| Public Subnet 2 | 10.0.2.0/24 |[m
+[31m-| Private Subnet 1 | 10.0.3.0/24 |[m
+[31m-| Private Subnet 2 | 10.0.4.0/24 |[m
+[32m+[m[32m| Public Subnet 1 (us-east-1a) | 10.0.1.0/24 |[m
+[32m+[m[32m| Public Subnet 2 (us-east-1b) | 10.0.2.0/24 |[m
+[32m+[m[32m| Private App Subnet 1 (us-east-1a) | 10.0.3.0/24 |[m
+[32m+[m[32m| Private App Subnet 2 (us-east-1b) | 10.0.4.0/24 |[m
+[32m+[m[32m| Database Subnet 1 (us-east-1a) | 10.0.5.0/24 |[m
+[32m+[m[32m| Database Subnet 2 (us-east-1b) | 10.0.6.0/24 |[m
+[32m+[m[32m| Bastion Host | 98.83.119.96 |[m
+[32m+[m[32m| NAT Gateway | 52.7.199.129 |[m
+[32m+[m[32m| RDS Endpoint | flask-crud-db.czyocqcwwzna.us-east-1.rds.amazonaws.com |[m
+[32m+[m[32m| Load Balancer DNS | flask-app-alb-1035767056.us-east-1.elb.amazonaws.com |[m
+ [m
+ ## Technology Choices[m
+ [m
+ ### Front-end Tier: Application Load Balancer[m
+ - **Why**: ALB provides layer 7 routing, native HTTPS support, and health checks to ensure high availability. It can distribute traffic across multiple availability zones for better reliability.[m
+[31m-- **Access**: The application is accessible via `http://flask-app-alb-1035767056.us-east-1.elb.amazonaws.com` (HTTP redirects to HTTPS)[m
+[32m+[m[32m- **Access**: The application is accessible via `https://flask-app-alb-1035767056.us-east-1.elb.amazonaws.com`[m
+ [m
+ ### Middle Tier: ECS Fargate with Gunicorn[m
+ - **Why**: Fargate eliminates server management for containers, allowing easy scaling and improved security. Gunicorn was chosen as the WSGI server as it's production-ready, supports multiple worker processes, and has good performance characteristics.[m
+[36m@@ -70,8 +77,8 @@[m [mFor secure access to the private RDS database, I've implemented a bastion host i[m
+ The bastion host:[m
+ - Runs Amazon Linux 2[m
+ - Is located in public subnet (10.0.1.0/24)[m
+[31m-- Has IP: 54.159.110.150[m
+[31m-- Allows SSH access with the labsuser.pem key[m
+[32m+[m[32m- Has IP: 98.83.119.96[m
+[32m+[m[32m- Allows SSH access with the bastion-key-new.pem key[m
+ [m
+ ### Database Query Script[m
+ [m
+[36m@@ -111,35 +118,63 @@[m [mid      title   description     status[m
+ [m
+ This script establishes an SSH connection to the bastion host, which then connects to the RDS instance in the private subnet. This maintains the security of our database while allowing authorized administrative access.[m
+ [m
+[32m+[m[32m## Environment Variables and Security[m
+[32m+[m
+[32m+[m[32mThis project uses environment variables to manage sensitive configuration. To set up your environment:[m
+[32m+[m
+[32m+[m[32m1. Copy `.env.example` to `.env` in both the root and flask-app directories[m
+[32m+[m[32m2. Fill in your actual credentials in the `.env` files[m
+[32m+[m[32m3. Never commit the actual `.env` files to version control[m
+[32m+[m
+[32m+[m[32mRequired environment variables:[m
+[32m+[m[32m- `SECRET_KEY`: Flask application secret key[m
+[32m+[m[32m- `DATABASE_URL`: MySQL database connection string[m
+[32m+[m
+[32m+[m[32mThe application will load these variables from the .env file at runtime, or you can set them directly in your environment.[m
+[32m+[m
+[32m+[m[32mFor security best practices:[m
+[32m+[m[32m- Store credentials in a password manager, not in code[m
+[32m+[m[32m- Use different credentials for development and production[m
+[32m+[m[32m- Consider using AWS Secrets Manager for production deployments[m
+[32m+[m
+ ## Implementation Guide[m
+ [m
+ ### AWS Management Console Implementation[m
+ [m
+ #### 1. VPC Setup[m
+[31m-1. Create VPC named "flask-app-vpc" with CIDR 10.0.0.0/16[m
+[32m+[m[32m1. Create VPC named "flask-vpc-1" with CIDR 10.0.0.0/16[m
+ 2. Create subnets:[m
+[31m-   - Public subnets in two AZs (10.0.1.0/24, 10.0.2.0/24)[m
+[31m-   - Private subnets in two AZs (10.0.3.0/24, 10.0.4.0/24)[m
+[31m-3. Create Internet Gateway and attach to VPC[m
+[31m-4. Create NAT Gateway in a public subnet[m
+[32m+[m[32m   - Public subnets in two AZs:[m
+[32m+[m[32m     * flask-subnet-1 (10.0.1.0/24) in us-east-1a[m
+[32m+[m[32m     * flask-subnet-2 (10.0.2.0/24) in us-east-1b[m
+[32m+[m[32m   - Private app subnets in two AZs:[m
+[32m+[m[32m     * flask-private-subnet-1 (10.0.3.0/24) in us-east-1a[m
+[32m+[m[32m     * flask-private-subnet-2 (10.0.4.0/24) in us-east-1b[m
+[32m+[m[32m   - Database subnets in two AZs:[m
+[32m+[m[32m     * flask-db-subnet-1 (10.0.5.0/24) in us-east-1a[m
+[32m+[m[32m     * flask-db-subnet-2 (10.0.6.0/24) in us-east-1b[m
+[32m+[m[32m3. Create Internet Gateway (flask-iwg-1) and attach to VPC[m
+[32m+[m[32m4. Create NAT Gateway (flask-nat-gateway-1) in a public subnet[m
+ 5. Create and configure route tables:[m
+[31m-   - Public route table with route to IGW[m
+[31m-   - Private route table with route to NAT Gateway[m
+[32m+[m[32m   - Public route table (flask-public-rtb) with route to IGW for public subnets[m
+[32m+[m[32m   - Private route table (flask-rtb-1) with route to NAT Gateway for private app subnets[m
+[32m+[m[32m   - Database route table (flask-db-rt-1) with local routes only for database subnets[m
+ [m
+ #### 2. Database Tier[m
+ 1. Create Security Group "flask-db-sg"[m
+[31m-2. Create DB Subnet Group using private subnets[m
+[32m+[m[32m2. Create DB Subnet Group using database subnets (10.0.5.0/24, 10.0.6.0/24)[m
+ 3. Create RDS MySQL instance:[m
+    - DB identifier: flask-crud-db[m
+    - Engine: MySQL 8.0[m
+[31m-   - Instance class: db.t2.micro[m
+[32m+[m[32m   - Instance class: db.t3.micro[m
+    - Multi-AZ: Yes (for improved reliability)[m
+    - Initial database name: flaskcrud[m
+    - Security group: flask-db-sg[m
+[31m-   - Subnet group: Private subnets[m
+[32m+[m[32m   - Subnet group: Database subnets[m
+[32m+[m[32m   - Storage: 20GB gp2, encrypted[m
+ [m
+ #### 3. Middle Tier[m
+[31m-1. Create Security Group "flask-ecs-sg"[m
+[32m+[m[32m1. Create Security Group "flask-app-sg"[m
+ 2. Create ECR repository for Docker image[m
+ 3. Modify Flask application:[m
+    - Update config.py to connect to RDS[m
+[36m@@ -148,49 +183,53 @@[m [mThis script establishes an SSH connection to the bastion host, which then connec[m
+ 5. Create ECS cluster "flask-app-cluster"[m
+ 6. Create Task Definition:[m
+    - Fargate compatible[m
+[31m-   - 0.5GB memory, 0.25 vCPU[m
+[32m+[m[32m   - 512MB memory, 0.25 vCPU[m
+    - Container:[m
+      - Port mapping: 8000[m
+      - Environment variables for DB connection[m
+[31m-     - CloudWatch logging enabled[m
+[31m-7. Create ECS Service with 2 tasks[m
+[32m+[m[32m     - CloudWatch logging enabled to group "/ecs/flask-app"[m
+[32m+[m[32m7. Create ECS Service with 2 tasks in private app subnets (10.0.3.0/24, 10.0.4.0/24)[m
+ [m
+ #### 4. Front-end Tier[m
+ 1. Create Security Group "flask-alb-sg"[m
+ 2. Create Application Load Balancer:[m
+[32m+[m[32m   - Name: flask-app-alb[m
+    - Internet-facing[m
+[31m-   - Public subnets[m
+[32m+[m[32m   - Public subnets (10.0.1.0/24, 10.0.2.0/24)[m
+    - Security group: flask-alb-sg[m
+[31m-   - Target group with health check[m
+[31m-3. Create ACM certificate[m
+[32m+[m[32m   - Target group with health check to port 8000[m
+[32m+[m[32m3. Create ACM certificate for domain flask.quinten-de-meyer.be[m
+ 4. Add HTTPS listener with certificate[m
+ 5. Configure redirect from HTTP to HTTPS[m
+ [m
+[31m-#### 5. Bastion Host (Optional)[m
+[31m-1. Create Security Group "flask-bastion-sg"[m
+[31m-2. Create EC2 key pair[m
+[31m-3. Launch EC2 instance in public subnet with Amazon Linux 2[m
+[31m-4. Connect to instance using SSH and key pair[m
+[32m+[m[32m#### 5. Bastion Host[m
+[32m+[m[32m1. Create Security Group "bastion-sg"[m
+[32m+[m[32m2. Create EC2 key pair named "bastion-key-new"[m
+[32m+[m[32m3. Launch EC2 instance in public subnet (10.0.1.0/24) with Amazon Linux 2[m
+[32m+[m[32m4. Assign Elastic IP: 98.83.119.96[m
+[32m+[m[32m5. Configure security group to allow SSH access[m
+ [m
+ ### AWS CLI Implementation[m
+ [m
+ ```bash[m
+ # 1. VPC Setup[m
+[31m-VPC_ID=$(aws ec2 create-vpc --cidr-block 10.0.0.0/16 --tag-specifications 'ResourceType=vpc,Tags=[{Key=Name,Value=flask-app-vpc}]' --query 'Vpc.VpcId' --output text)[m
+[32m+[m[32mVPC_ID=$(aws ec2 create-vpc --cidr-block 10.0.0.0/16 --tag-specifications 'ResourceType=vpc,Tags=[{Key=Name,Value=flask-vpc-1}]' --query 'Vpc.VpcId' --output text)[m
+ aws ec2 modify-vpc-attribute --vpc-id $VPC_ID --enable-dns-hostnames[m
+ [m
+ # Create Subnets[m
+[31m-PUBLIC_SUBNET1_ID=$(aws ec2 create-subnet --vpc-id $VPC_ID --cidr-block 10.0.1.0/24 --availability-zone us-east-1a --tag-specifications 'ResourceType=subnet,Tags=[{Key=Name,Value=flask-app-public1}]' --query 'Subnet.SubnetId' --output text)[m
+[31m-PUBLIC_SUBNET2_ID=$(aws ec2 create-subnet --vpc-id $VPC_ID --cidr-block 10.0.2.0/24 --availability-zone us-east-1b --tag-specifications 'ResourceType=subnet,Tags=[{Key=Name,Value=flask-app-public2}]' --query 'Subnet.SubnetId' --output text)[m
+[31m-PRIVATE_SUBNET1_ID=$(aws ec2 create-subnet --vpc-id $VPC_ID --cidr-block 10.0.3.0/24 --availability-zone us-east-1a --tag-specifications 'ResourceType=subnet,Tags=[{Key=Name,Value=flask-app-private1}]' --query 'Subnet.SubnetId' --output text)[m
+[31m-PRIVATE_SUBNET2_ID=$(aws ec2 create-subnet --vpc-id $VPC_ID --cidr-block 10.0.4.0/24 --availability-zone us-east-1b --tag-specifications 'ResourceType=subnet,Tags=[{Key=Name,Value=flask-app-private2}]' --query 'Subnet.SubnetId' --output text)[m
+[32m+[m[32mPUBLIC_SUBNET1_ID=$(aws ec2 create-subnet --vpc-id $VPC_ID --cidr-block 10.0.1.0/24 --availability-zone us-east-1a --tag-specifications 'ResourceType=subnet,Tags=[{Key=Name,Value=flask-subnet-1}]' --query 'Subnet.SubnetId' --output text)[m
+[32m+[m[32mPUBLIC_SUBNET2_ID=$(aws ec2 create-subnet --vpc-id $VPC_ID --cidr-block 10.0.2.0/24 --availability-zone us-east-1b --tag-specifications 'ResourceType=subnet,Tags=[{Key=Name,Value=flask-subnet-2}]' --query 'Subnet.SubnetId' --output text)[m
+[32m+[m[32mPRIVATE_SUBNET1_ID=$(aws ec2 create-subnet --vpc-id $VPC_ID --cidr-block 10.0.3.0/24 --availability-zone us-east-1a --tag-specifications 'ResourceType=subnet,Tags=[{Key=Name,Value=flask-private-subnet-1}]' --query 'Subnet.SubnetId' --output text)[m
+[32m+[m[32mPRIVATE_SUBNET2_ID=$(aws ec2 create-subnet --vpc-id $VPC_ID --cidr-block 10.0.4.0/24 --availability-zone us-east-1b --tag-specifications 'ResourceType=subnet,Tags=[{Key=Name,Value=flask-private-subnet-2}]' --query 'Subnet.SubnetId' --output text)[m
+[32m+[m[32mDB_SUBNET1_ID=$(aws ec2 create-subnet --vpc-id $VPC_ID --cidr-block 10.0.5.0/24 --availability-zone us-east-1a --tag-specifications 'ResourceType=subnet,Tags=[{Key=Name,Value=flask-db-subnet-1}]' --query 'Subnet.SubnetId' --output text)[m
+[32m+[m[32mDB_SUBNET2_ID=$(aws ec2 create-subnet --vpc-id $VPC_ID --cidr-block 10.0.6.0/24 --availability-zone us-east-1b --tag-specifications 'ResourceType=subnet,Tags=[{Key=Name,Value=flask-db-subnet-2}]' --query 'Subnet.SubnetId' --output text)[m
+ [m
+ # Create Internet Gateway[m
+[31m-IGW_ID=$(aws ec2 create-internet-gateway --tag-specifications 'ResourceType=internet-gateway,Tags=[{Key=Name,Value=flask-app-igw}]' --query 'InternetGateway.InternetGatewayId' --output text)[m
+[32m+[m[32mIGW_ID=$(aws ec2 create-internet-gateway --tag-specifications 'ResourceType=internet-gateway,Tags=[{Key=Name,Value=flask-iwg-1}]' --query 'InternetGateway.InternetGatewayId' --output text)[m
+ aws ec2 attach-internet-gateway --internet-gateway-id $IGW_ID --vpc-id $VPC_ID[m
+ [m
+ # Create and configure public route table[m
+[31m-PUBLIC_RT_ID=$(aws ec2 create-route-table --vpc-id $VPC_ID --tag-specifications 'ResourceType=route-table,Tags=[{Key=Name,Value=flask-app-public-rt}]' --query 'RouteTable.RouteTableId' --output text)[m
+[32m+[m[32mPUBLIC_RT_ID=$(aws ec2 create-route-table --vpc-id $VPC_ID --tag-specifications 'ResourceType=route-table,Tags=[{Key=Name,Value=flask-public-rtb}]' --query 'RouteTable.RouteTableId' --output text)[m
+ aws ec2 create-route --route-table-id $PUBLIC_RT_ID --destination-cidr-block 0.0.0.0/0 --gateway-id $IGW_ID[m
+ aws ec2 associate-route-table --route-table-id $PUBLIC_RT_ID --subnet-id $PUBLIC_SUBNET1_ID[m
+ aws ec2 associate-route-table --route-table-id $PUBLIC_RT_ID --subnet-id $PUBLIC_SUBNET2_ID[m
+[36m@@ -199,51 +238,60 @@[m [maws ec2 associate-route-table --route-table-id $PUBLIC_RT_ID --subnet-id $PUBLIC[m
+ EIP_ALLOC_ID=$(aws ec2 allocate-address --domain vpc --query 'AllocationId' --output text)[m
+ [m
+ # Create NAT Gateway[m
+[31m-NAT_GW_ID=$(aws ec2 create-nat-gateway --subnet-id $PUBLIC_SUBNET1_ID --allocation-id $EIP_ALLOC_ID --tag-specifications 'ResourceType=natgateway,Tags=[{Key=Name,Value=flask-app-nat}]' --query 'NatGateway.NatGatewayId' --output text)[m
+[32m+[m[32mNAT_GW_ID=$(aws ec2 create-nat-gateway --subnet-id $PUBLIC_SUBNET1_ID --allocation-id $EIP_ALLOC_ID --tag-specifications 'ResourceType=natgateway,Tags=[{Key=Name,Value=flask-nat-gateway-1}]' --query 'NatGateway.NatGatewayId' --output text)[m
+ [m
+[31m-# Create and configure private route table[m
+[31m-PRIVATE_RT_ID=$(aws ec2 create-route-table --vpc-id $VPC_ID --tag-specifications 'ResourceType=route-table,Tags=[{Key=Name,Value=flask-app-private-rt}]' --query 'RouteTable.RouteTableId' --output text)[m
+[32m+[m[32m# Create and configure private app subnet route table[m
+[32m+[m[32mPRIVATE_RT_ID=$(aws ec2 create-route-table --vpc-id $VPC_ID --tag-specifications 'ResourceType=route-table,Tags=[{Key=Name,Value=flask-rtb-1}]' --query 'RouteTable.RouteTableId' --output text)[m
+ aws ec2 create-route --route-table-id $PRIVATE_RT_ID --destination-cidr-block 0.0.0.0/0 --nat-gateway-id $NAT_GW_ID[m
+ aws ec2 associate-route-table --route-table-id $PRIVATE_RT_ID --subnet-id $PRIVATE_SUBNET1_ID[m
+ aws ec2 associate-route-table --route-table-id $PRIVATE_RT_ID --subnet-id $PRIVATE_SUBNET2_ID[m
+ [m
+[32m+[m[32m# Create and configure database subnet route table[m
+[32m+[m[32mDB_RT_ID=$(aws ec2 create-route-table --vpc-id $VPC_ID --tag-specifications 'ResourceType=route-table,Tags=[{Key=Name,Value=flask-db-rt-1}]' --query 'RouteTable.RouteTableId' --output text)[m
+[32m+[m[32maws ec2 associate-route-table --route-table-id $DB_RT_ID --subnet-id $DB_SUBNET1_ID[m
+[32m+[m[32maws ec2 associate-route-table --route-table-id $DB_RT_ID --subnet-id $DB_SUBNET2_ID[m
+[32m+[m
+ # 2. Database Tier[m
+ # Create Security Group for RDS[m
+ DB_SG_ID=$(aws ec2 create-security-group --group-name flask-db-sg --description "Security group for Flask app database" --vpc-id $VPC_ID --query 'GroupId' --output text)[m
+ aws ec2 create-tags --resources $DB_SG_ID --tags Key=Name,Value=flask-db-sg[m
+ [m
+ # Create DB Subnet Group[m
+[31m-aws rds create-db-subnet-group --db-subnet-group-name flask-db-subnet-group --db-subnet-group-description "Subnet group for Flask app database" --subnet-ids $PRIVATE_SUBNET1_ID $PRIVATE_SUBNET2_ID[m
+[32m+[m[32maws rds create-db-subnet-group --db-subnet-group-name flask-db-subnet-group --db-subnet-group-description "Subnet group for Flask app database" --subnet-ids $DB_SUBNET1_ID $DB_SUBNET2_ID[m
+ [m
+ # Create RDS Instance with Multi-AZ[m
+ aws rds create-db-instance \[m
+     --db-instance-identifier flask-crud-db \[m
+     --db-name flaskcrud \[m
+     --engine mysql \[m
+[32m+[m[32m    --engine-version 8.0.32 \[m
+     --master-username admin \[m
+[31m-    --master-user-password YourStrongPassword123! \[m
+[31m-    --db-instance-class db.t2.micro \[m
+[32m+[m[32m    --master-user-password '*k62VSj4w6u1vSAxqk6h' \[m
+[32m+[m[32m    --db-instance-class db.t3.micro \[m
+     --allocated-storage 20 \[m
+[32m+[m[32m    --storage-type gp2 \[m
+[32m+[m[32m    --storage-encrypted \[m
+     --vpc-security-group-ids $DB_SG_ID \[m
+     --db-subnet-group-name flask-db-subnet-group \[m
+     --multi-az \[m
+[32m+[m[32m    --backup-retention-period 7 \[m
+     --no-publicly-accessible[m
+ [m
+ # 3. Middle Tier[m
+ # Create Security Group for ECS[m
+[31m-ECS_SG_ID=$(aws ec2 create-security-group --group-name flask-ecs-sg --description "Security group for Flask app ECS tasks" --vpc-id $VPC_ID --query 'GroupId' --output text)[m
+[31m-aws ec2 create-tags --resources $ECS_SG_ID --tags Key=Name,Value=flask-ecs-sg[m
+[32m+[m[32mECS_SG_ID=$(aws ec2 create-security-group --group-name flask-app-sg --description "Security group for Flask app ECS tasks" --vpc-id $VPC_ID --query 'GroupId' --output text)[m
+[32m+[m[32maws ec2 create-tags --resources $ECS_SG_ID --tags Key=Name,Value=flask-app-sg[m
+ [m
+ # Create ECR Repository[m
+[31m-aws ecr create-repository --repository-name flask-app[m
+[32m+[m[32maws ecr create-repository --repository-name flask-crud-app[m
+ [m
+ # Authenticate to ECR[m
+ aws ecr get-login-password | docker login --username AWS --password-stdin $(aws sts get-caller-identity --query 'Account' --output text).dkr.ecr.$(aws configure get region).amazonaws.com[m
+ [m
+[31m-# Update app/config.py then build and push Docker image[m
+[31m-docker build -t flask-app .[m
+[31m-docker tag flask-app:latest $(aws sts get-caller-identity --query 'Account' --output text).dkr.ecr.$(aws configure get region).amazonaws.com/flask-app:latest[m
+[31m-docker push $(aws sts get-caller-identity --query 'Account' --output text).dkr.ecr.$(aws configure get region).amazonaws.com/flask-app:latest[m
+[32m+[m[32m# Build and push Docker image[m
+[32m+[m[32mdocker build -t flask-crud-app ./flask-app[m
+[32m+[m[32mdocker tag flask-crud-app:latest $(aws sts get-caller-identity --query 'Account' --output text).dkr.ecr.$(aws configure get region).amazonaws.com/flask-crud-app:latest[m
+[32m+[m[32mdocker push $(aws sts get-caller-identity --query 'Account' --output text).dkr.ecr.$(aws configure get region).amazonaws.com/flask-crud-app:latest[m
+ [m
+ # Create ECS Cluster[m
+ aws ecs create-cluster --cluster-name flask-app-cluster[m
+[36m@@ -258,8 +306,8 @@[m [maws ecs register-task-definition \[m
+     --requires-compatibilities FARGATE \[m
+     --cpu 256 \[m
+     --memory 512 \[m
+[31m-    --execution-role-arn arn:aws:iam::$(aws sts get-caller-identity --query 'Account' --output text):role/ecsTaskExecutionRole \[m
+[31m-    --container-definitions "[{\"name\":\"flask-app\",\"image\":\"$(aws sts get-caller-identity --query 'Account' --output text).dkr.ecr.$(aws configure get region).amazonaws.com/flask-app:latest\",\"essential\":true,\"portMappings\":[{\"containerPort\":8000,\"hostPort\":8000,\"protocol\":\"tcp\"}],\"logConfiguration\":{\"logDriver\":\"awslogs\",\"options\":{\"awslogs-group\":\"/ecs/flask-app\",\"awslogs-region\":\"$(aws configure get region)\",\"awslogs-stream-prefix\":\"ecs\"}}}]"[m
+[32m+[m[32m    --execution-role-arn arn:aws:iam::$(aws sts get-caller-identity --query 'Account' --output text):role/LabRole \[m
+[32m+[m[32m    --container-definitions "[{\"name\":\"flask-app\",\"image\":\"$(aws sts get-caller-identity --query 'Account' --output text).dkr.ecr.$(aws configure get region).amazonaws.com/flask-crud-app:latest\",\"essential\":true,\"port

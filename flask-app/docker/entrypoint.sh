@@ -3,7 +3,7 @@ set -e
 
 # Print environment variables (except secrets)
 echo "========== Environment Debug =========="
-env | grep -v SECRET | grep -v PASSWORD
+env | grep -v SECRET | grep -v PASSWORD | grep -v DATABASE_URL
 echo "======================================="
 
 # Initialize the database
@@ -15,11 +15,21 @@ import time
 import os
 import traceback
 import pymysql
+import urllib.parse
 
-# Display database connection string (without password)
+# Parse database connection info from DATABASE_URL securely
 db_url = os.environ.get('DATABASE_URL', 'None')
 if db_url and 'mysql' in db_url:
-    print(f'Using database: {db_url.split('@')[1].split('/')[0]}')
+    # Parse the URL more safely
+    connection_parts = urllib.parse.urlparse(db_url)
+    user = connection_parts.username
+    password = connection_parts.password
+    host = connection_parts.hostname
+    port = connection_parts.port or 3306
+    db_name = connection_parts.path.lstrip('/')
+    
+    # Only print non-sensitive parts
+    print(f'Using database: {host}:{port}/{db_name} as {user}')
 
 # Try multiple times to initialize the database
 max_tries = 10
@@ -28,18 +38,20 @@ while tries < max_tries:
     try:
         # Try connecting to the database directly first to check connectivity
         if 'mysql' in db_url:
-            connection_parts = db_url.replace('mysql+pymysql://', '').split('@')[0].split(':')
-            user = connection_parts[0]
-            # Don't print the password
-            host_parts = db_url.split('@')[1].split('/')
-            host = host_parts[0]
-            db_name = host_parts[1].split('?')[0]
+            # Parse connection details securely
+            connection_parts = urllib.parse.urlparse(db_url)
+            user = connection_parts.username
+            password = connection_parts.password
+            host = connection_parts.hostname
+            port = connection_parts.port or 3306
+            db_name = connection_parts.path.lstrip('/')
             
-            print(f'Testing direct database connection to {host} as {user}...')
+            print(f'Testing direct database connection to {host}:{port} as {user}...')
             conn = pymysql.connect(
-                host=host.split(':')[0],
+                host=host,
+                port=port,
                 user=user,
-                password=os.environ.get('DATABASE_PASSWORD') or connection_parts[1],
+                password=password,
                 database=db_name
             )
             print('Direct database connection successful!')

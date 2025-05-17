@@ -1,7 +1,7 @@
 # SECURITY WARNING: This script contains database credentials.
 # For production use, consider using environment variables or a secure vault.
 # Database connection info
-$BASTION_HOST="107.22.104.48"
+$BASTION_HOST="3.92.143.158"
 $KEY_FILE="labsuser.pem"
 $DB_HOST="flask-crud-db.czyocqcwwzna.us-east-1.rds.amazonaws.com"
 $DB_USER="admin"

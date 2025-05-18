@@ -6,7 +6,7 @@
                 {
                     "AllocationId": "eipalloc-EXAMPLE",
                     "NetworkInterfaceId": "eni-EXAMPLEXAMPLE",
-                    "PrivateIp": "10.0.1.211",
+                    "PrivateIp": "10.0.X.X",
                     "PublicIp": "XX.XX.XX.XX",
                     "AssociationId": "eipassoc-0b5bb684b1b79b03d",
                     "IsPrimary": true,

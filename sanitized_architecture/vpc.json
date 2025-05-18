@@ -5,8 +5,8 @@
             "InstanceTenancy": "default",
             "CidrBlockAssociationSet": [
                 {
-                    "AssociationId": "vpc-EXAMPLEidr-assoc-0b285747272cf68f7",
-                    "CidrBlock": "10.0.0.0/16",
+                    "AssociationId": "vpc-EXAMPLEidr-EXAMPLEssoc-0b285747272cf68f7",
+                    "CidrBlock": "10.0.X.X/16",
                     "CidrBlockState": {
                         "State": "associated"
                     }
@@ -24,7 +24,7 @@
             },
             "VpcId": "vpc-EXAMPLE",
             "State": "available",
-            "CidrBlock": "10.0.0.0/16",
+            "CidrBlock": "10.0.X.X/16",
             "DhcpOptionsId": "dopt-0d3ca8c0b9d2a4bde"
         }
     ]

@@ -7,7 +7,7 @@
             "Protocol": "HTTPS",
             "Certificates": [
                 {
-                    "CertificateArn": "arn:aws:acm:us-east-1:ACCOUNT_ID:certificate/CERTIFICATE_ID"
+                    "CertificateArn": "arn:aws:acm:us-east-1:ACCOUNT_ID:certificate/UUID-EXAMPLE"
                 }
             ],
             "SslPolicy": "ELBSecurityPolicy-2016-08",

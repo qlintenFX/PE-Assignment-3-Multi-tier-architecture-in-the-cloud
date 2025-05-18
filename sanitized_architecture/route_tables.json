@@ -33,7 +33,7 @@
             "RouteTableId": "rtb-EXAMPLE",
             "Routes": [
                 {
-                    "DestinationCidrBlock": "10.0.0.0/16",
+                    "DestinationCidrBlock": "10.0.X.X/16",
                     "GatewayId": "local",
                     "Origin": "CreateRouteTable",
                     "State": "active"
@@ -79,7 +79,7 @@
             "RouteTableId": "rtb-EXAMPLE",
             "Routes": [
                 {
-                    "DestinationCidrBlock": "10.0.0.0/16",
+                    "DestinationCidrBlock": "10.0.X.X/16",
                     "GatewayId": "local",
                     "Origin": "CreateRouteTable",
                     "State": "active"
@@ -119,7 +119,7 @@
             "RouteTableId": "rtb-EXAMPLE",
             "Routes": [
                 {
-                    "DestinationCidrBlock": "10.0.0.0/16",
+                    "DestinationCidrBlock": "10.0.X.X/16",
                     "GatewayId": "local",
                     "Origin": "CreateRouteTable",
                     "State": "active"

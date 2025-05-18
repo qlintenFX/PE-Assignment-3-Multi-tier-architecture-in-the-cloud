@@ -73,7 +73,7 @@
             "StorageType": "gp2",
             "DbInstancePort": 0,
             "StorageEncrypted": true,
-            "KmsKeyId": "arn:aws:kms:us-east-1:ACCOUNT_ID:key/KEY_ID",
+            "KmsKeyId": "arn:aws:kms:us-east-1:ACCOUNT_ID:key/UUID-EXAMPLE",
             "DbiResourceId": "db-PTCGTL7XDAZSGBOD326U73BLRE",
             "CACertificateIdentifier": "rds-ca-rsa2048-g1",
             "DomainMemberships": [],

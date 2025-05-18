@@ -2,7 +2,7 @@
     "TargetHealthDescriptions": [
         {
             "Target": {
-                "Id": "10.0.3.97",
+                "Id": "10.0.X.X",
                 "Port": 8000,
                 "AvailabilityZone": "us-east-1a"
             },
@@ -18,7 +18,7 @@
         },
         {
             "Target": {
-                "Id": "10.0.4.224",
+                "Id": "10.0.X.X",
                 "Port": 8000,
                 "AvailabilityZone": "us-east-1b"
             },

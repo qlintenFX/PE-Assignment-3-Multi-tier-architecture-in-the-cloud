@@ -42,7 +42,7 @@ foreach ($file in $files) {
     # Replace NAT Gateway IP
     $content = $content -replace "52\.7\.199\.129", "XX.XX.XX.XX"
     
-    # Replace resource IDs with placeholders
+    # Replace resource IDs with placeholders - More aggressive replacement patterns
     $content = $content -replace "subnet-[0-9a-f]+", "subnet-EXAMPLE"
     $content = $content -replace "vpc-[0-9a-f]+", "vpc-EXAMPLE"
     $content = $content -replace "sg-[0-9a-f]+", "sg-EXAMPLE"
@@ -53,6 +53,14 @@ foreach ($file in $files) {
     $content = $content -replace "i-[0-9a-f]+", "i-EXAMPLE"
     $content = $content -replace "ami-[0-9a-f]+", "ami-EXAMPLE"
     $content = $content -replace "eipalloc-[0-9a-f]+", "eipalloc-EXAMPLE"
+    $content = $content -replace "vol-[0-9a-f]+", "vol-EXAMPLE"
+    $content = $content -replace "r-[0-9a-f]+", "r-EXAMPLE"
+    
+    # Replace any UUID-like patterns
+    $content = $content -replace "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}", "UUID-EXAMPLE"
+    
+    # Replace MAC addresses
+    $content = $content -replace "([0-9a-f]{2}:){5}[0-9a-f]{2}", "00:00:00:00:00:00"
     
     # Replace certificate IDs
     $content = $content -replace "001a1aec-a85f-4302-9e37-241f648f57d8", "CERTIFICATE_ID"
@@ -66,6 +74,18 @@ foreach ($file in $files) {
     
     # Replace load balancer IDs
     $content = $content -replace "327fdafad516af86", "LOAD_BALANCER_ID"
+    
+    # Replace Private IP addresses with sanitized ones
+    $content = $content -replace "10\.0\.[0-9]+\.[0-9]+", "10.0.X.X"
+    
+    # Replace any remaining sensitive patterns
+    $content = $content -replace "arn:aws:[a-z0-9-]+:[a-z0-9-]+:[0-9]+:[a-zA-Z0-9-/]+", "arn:aws:service:region:ACCOUNT_ID:resource/EXAMPLE"
+    
+    # Replace any remaining long hexadecimal strings (potential keys or hashes)
+    $content = $content -replace "[0-9a-f]{32,}", "SANITIZED-HEX-STRING"
+    
+    # Replace any suspicious base64-like strings
+    $content = $content -replace "[A-Za-z0-9+/]{40,}={0,2}", "SANITIZED-BASE64-STRING"
     
     # Write the sanitized content to the output directory
     $content | Out-File -FilePath "$outputPath\$($file.Name)" -Encoding utf8

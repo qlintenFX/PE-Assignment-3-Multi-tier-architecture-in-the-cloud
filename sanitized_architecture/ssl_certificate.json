@@ -18,7 +18,7 @@
                 "ValidationMethod": "DNS"
             }
         ],
-        "Serial": "0d:a8:ef:8a:23:03:6b:fc:06:66:16:31:ab:ce:76:3e",
+        "Serial": "00:00:00:00:00:00:00:00:00:00:00:00:ab:ce:76:3e",
         "Subject": "CN=example.domain.com",
         "Issuer": "Amazon",
         "CreatedAt": 1747084441.951,
@@ -52,7 +52,7 @@
         ],
         "RenewalEligibility": "ELIGIBLE",
         "Options": {
-            "CertificateTransparencyLoggingPreference": "ENABLED"
+            "SANITIZED-BASE64-STRING": "ENABLED"
         }
     }
 }

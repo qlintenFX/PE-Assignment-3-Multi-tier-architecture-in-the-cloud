@@ -59,7 +59,7 @@
                 "name": "ecs.capability.execution-role-awslogs"
             },
             {
-                "name": "com.amazonaws.ecs.capability.ecr-auth"
+                "name": "com.amazonaws.ecs.capability.ecr-EXAMPLEuth"
             },
             {
                 "name": "com.amazonaws.ecs.capability.docker-remote-api.1.19"
@@ -95,7 +95,7 @@
         "cpu": "256",
         "memory": "512",
         "registeredAt": 1747062278.311,
-        "registeredBy": "arn:aws:sts::ACCOUNT_ID:assumed-role/voclabs/user-email@example.com",
+        "registeredBy": "arn:aws:sts::ACCOUNT_ID:assumed-role/voclabs/user-EXAMPLEmail@example.com",
         "enableFaultInjection": false
     },
     "tags": []

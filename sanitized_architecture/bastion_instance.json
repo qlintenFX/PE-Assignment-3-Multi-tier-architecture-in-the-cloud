@@ -1,7 +1,7 @@
 ﻿{
     "Reservations": [
         {
-            "ReservationId": "r-0208fcb4bed26b976",
+            "ReservationId": "r-EXAMPLE",
             "OwnerId": "ACCOUNT_ID",
             "Groups": [],
             "Instances": [
@@ -14,11 +14,11 @@
                                 "AttachTime": "2025-05-12T20:56:59.000Z",
                                 "DeleteOnTermination": true,
                                 "Status": "attached",
-                                "VolumeId": "vol-03e9b22162b0fe22a"
+                                "VolumeId": "vol-EXAMPLE"
                             }
                         }
                     ],
-                    "ClientToken": "b281b111-1c38-4e7e-9167-e3e762fc3010",
+                    "ClientToken": "UUID-EXAMPLE",
                     "EbsOptimized": false,
                     "EnaSupport": true,
                     "Hypervisor": "xen",
@@ -40,14 +40,14 @@
                                 }
                             ],
                             "Ipv6Addresses": [],
-                            "MacAddress": "0e:03:bf:c5:31:61",
+                            "MacAddress": "00:00:00:00:00:00",
                             "NetworkInterfaceId": "eni-EXAMPLEXAMPLE",
                             "OwnerId": "ACCOUNT_ID",
-                            "PrivateIpAddress": "10.0.1.161",
+                            "PrivateIpAddress": "10.0.X.X",
                             "PrivateIpAddresses": [
                                 {
                                     "Primary": true,
-                                    "PrivateIpAddress": "10.0.1.161"
+                                    "PrivateIpAddress": "10.0.X.X"
                                 }
                             ],
                             "SourceDestCheck": true,
@@ -139,12 +139,12 @@
                     },
                     "SubnetId": "subnet-EXAMPLE",
                     "VpcId": "vpc-EXAMPLE",
-                    "PrivateIpAddress": "10.0.1.161"
+                    "PrivateIpAddress": "10.0.X.X"
                 }
             ]
         },
         {
-            "ReservationId": "r-05af4debb9a2dcb6d",
+            "ReservationId": "r-EXAMPLE",
             "OwnerId": "ACCOUNT_ID",
             "Groups": [],
             "Instances": [
@@ -157,11 +157,11 @@
                                 "AttachTime": "2025-05-12T20:55:48.000Z",
                                 "DeleteOnTermination": true,
                                 "Status": "attached",
-                                "VolumeId": "vol-0b037d73b84f7ff54"
+                                "VolumeId": "vol-EXAMPLE"
                             }
                         }
                     ],
-                    "ClientToken": "5fb72f6d-e898-48e4-99b0-c33a46442692",
+                    "ClientToken": "UUID-EXAMPLE",
                     "EbsOptimized": false,
                     "EnaSupport": true,
                     "Hypervisor": "xen",
@@ -183,14 +183,14 @@
                                 }
                             ],
                             "Ipv6Addresses": [],
-                            "MacAddress": "0e:18:98:39:59:f5",
+                            "MacAddress": "00:00:00:00:00:00",
                             "NetworkInterfaceId": "eni-EXAMPLEXAMPLE",
                             "OwnerId": "ACCOUNT_ID",
-                            "PrivateIpAddress": "10.0.1.115",
+                            "PrivateIpAddress": "10.0.X.X",
                             "PrivateIpAddresses": [
                                 {
                                     "Primary": true,
-                                    "PrivateIpAddress": "10.0.1.115"
+                                    "PrivateIpAddress": "10.0.X.X"
                                 }
                             ],
                             "SourceDestCheck": true,
@@ -282,12 +282,12 @@
                     },
                     "SubnetId": "subnet-EXAMPLE",
                     "VpcId": "vpc-EXAMPLE",
-                    "PrivateIpAddress": "10.0.1.115"
+                    "PrivateIpAddress": "10.0.X.X"
                 }
             ]
         },
         {
-            "ReservationId": "r-07a0acb13db8792e0",
+            "ReservationId": "r-EXAMPLE",
             "OwnerId": "ACCOUNT_ID",
             "Groups": [],
             "Instances": [
@@ -300,11 +300,11 @@
                                 "AttachTime": "2025-05-12T21:01:53.000Z",
                                 "DeleteOnTermination": true,
                                 "Status": "attached",
-                                "VolumeId": "vol-0f8493b5b80828ff7"
+                                "VolumeId": "vol-EXAMPLE"
                             }
                         }
                     ],
-                    "ClientToken": "da87f079-5929-4057-b5fc-edd8f553db18",
+                    "ClientToken": "UUID-EXAMPLE",
                     "EbsOptimized": false,
                     "EnaSupport": true,
                     "Hypervisor": "xen",
@@ -331,10 +331,10 @@
                                 }
                             ],
                             "Ipv6Addresses": [],
-                            "MacAddress": "0e:68:25:f9:e0:f1",
+                            "MacAddress": "00:00:00:00:00:00",
                             "NetworkInterfaceId": "eni-EXAMPLEXAMPLE",
                             "OwnerId": "ACCOUNT_ID",
-                            "PrivateIpAddress": "10.0.1.38",
+                            "PrivateIpAddress": "10.0.X.X",
                             "PrivateIpAddresses": [
                                 {
                                     "Association": {
@@ -343,7 +343,7 @@
                                         "PublicIp": "XX.XX.XX.XX"
                                     },
                                     "Primary": true,
-                                    "PrivateIpAddress": "10.0.1.38"
+                                    "PrivateIpAddress": "10.0.X.X"
                                 }
                             ],
                             "SourceDestCheck": true,
@@ -435,7 +435,7 @@
                     },
                     "SubnetId": "subnet-EXAMPLE",
                     "VpcId": "vpc-EXAMPLE",
-                    "PrivateIpAddress": "10.0.1.38",
+                    "PrivateIpAddress": "10.0.X.X",
                     "PublicIpAddress": "XX.XX.XX.XX"
                 }
             ]

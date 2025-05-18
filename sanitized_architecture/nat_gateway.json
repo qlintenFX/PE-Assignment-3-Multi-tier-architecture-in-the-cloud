@@ -1,0 +1,30 @@
+﻿{
+    "NatGateways": [
+        {
+            "CreateTime": "2025-05-12T13:15:40.000Z",
+            "NatGatewayAddresses": [
+                {
+                    "AllocationId": "eipalloc-EXAMPLE",
+                    "NetworkInterfaceId": "eni-EXAMPLEXAMPLE",
+                    "PrivateIp": "10.0.1.211",
+                    "PublicIp": "XX.XX.XX.XX",
+                    "AssociationId": "eipassoc-0b5bb684b1b79b03d",
+                    "IsPrimary": true,
+                    "Status": "succeeded"
+                }
+            ],
+            "NatGatewayId": "nat-EXAMPLE",
+            "State": "available",
+            "SubnetId": "subnet-EXAMPLE",
+            "VpcId": "vpc-EXAMPLE",
+            "Tags": [
+                {
+                    "Key": "Name",
+                    "Value": "flask-nat-gateway-1"
+                }
+            ],
+            "ConnectivityType": "public"
+        }
+    ]
+}
+

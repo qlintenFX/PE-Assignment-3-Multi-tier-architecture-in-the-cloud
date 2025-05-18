@@ -1,0 +1,32 @@
+﻿{
+    "Vpcs": [
+        {
+            "OwnerId": "ACCOUNT_ID",
+            "InstanceTenancy": "default",
+            "CidrBlockAssociationSet": [
+                {
+                    "AssociationId": "vpc-EXAMPLEidr-assoc-0b285747272cf68f7",
+                    "CidrBlock": "10.0.0.0/16",
+                    "CidrBlockState": {
+                        "State": "associated"
+                    }
+                }
+            ],
+            "IsDefault": false,
+            "Tags": [
+                {
+                    "Key": "Name",
+                    "Value": "flask-vpc-EXAMPLE"
+                }
+            ],
+            "BlockPublicAccessStates": {
+                "InternetGatewayBlockMode": "off"
+            },
+            "VpcId": "vpc-EXAMPLE",
+            "State": "available",
+            "CidrBlock": "10.0.0.0/16",
+            "DhcpOptionsId": "dopt-0d3ca8c0b9d2a4bde"
+        }
+    ]
+}
+

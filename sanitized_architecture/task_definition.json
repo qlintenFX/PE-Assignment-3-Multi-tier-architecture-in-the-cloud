@@ -1,0 +1,103 @@
+﻿{
+    "taskDefinition": {
+        "taskDefinitionArn": "arn:aws:ecs:us-east-1:ACCOUNT_ID:task-definition/flask-app-task:1",
+        "containerDefinitions": [
+            {
+                "name": "flask-app",
+                "image": "ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/flask-crud-app:latest",
+                "cpu": 0,
+                "portMappings": [
+                    {
+                        "containerPort": 8000,
+                        "hostPort": 8000,
+                        "protocol": "tcp",
+                        "name": "flask-app-8000-tcp",
+                        "appProtocol": "http"
+                    }
+                ],
+                "essential": true,
+                "environment": [
+                    {
+                        "name": "SECRET_KEY",
+                        "value": "${SECRET_KEY}"
+                    },
+                    {
+                        "name": "DATABASE_URL",
+                        "value": "mysql+pymysql://${DB_USERNAME}:${DB_PASSWORD}@${DB_HOST}:3306/${DB_NAME}"
+                    }
+                ],
+                "environmentFiles": [],
+                "mountPoints": [],
+                "volumesFrom": [],
+                "ulimits": [],
+                "logConfiguration": {
+                    "logDriver": "awslogs",
+                    "options": {
+                        "awslogs-group": "/ecs/flask-app",
+                        "mode": "non-blocking",
+                        "awslogs-create-group": "true",
+                        "max-buffer-size": "25m",
+                        "awslogs-region": "us-east-1",
+                        "awslogs-stream-prefix": "ecs"
+                    },
+                    "secretOptions": []
+                },
+                "systemControls": []
+            }
+        ],
+        "family": "flask-app-task",
+        "executionRoleArn": "arn:aws:iam::ACCOUNT_ID:role/LabRole",
+        "networkMode": "awsvpc",
+        "revision": 1,
+        "volumes": [],
+        "status": "ACTIVE",
+        "requiresAttributes": [
+            {
+                "name": "com.amazonaws.ecs.capability.logging-driver.awslogs"
+            },
+            {
+                "name": "ecs.capability.execution-role-awslogs"
+            },
+            {
+                "name": "com.amazonaws.ecs.capability.ecr-auth"
+            },
+            {
+                "name": "com.amazonaws.ecs.capability.docker-remote-api.1.19"
+            },
+            {
+                "name": "com.amazonaws.ecs.capability.docker-remote-api.1.28"
+            },
+            {
+                "name": "ecs.capability.execution-role-ecr-pull"
+            },
+            {
+                "name": "com.amazonaws.ecs.capability.docker-remote-api.1.18"
+            },
+            {
+                "name": "ecs.capability.task-eni"
+            },
+            {
+                "name": "com.amazonaws.ecs.capability.docker-remote-api.1.29"
+            }
+        ],
+        "placementConstraints": [],
+        "compatibilities": [
+            "EC2",
+            "FARGATE"
+        ],
+        "runtimePlatform": {
+            "cpuArchitecture": "X86_64",
+            "operatingSystemFamily": "LINUX"
+        },
+        "requiresCompatibilities": [
+            "FARGATE"
+        ],
+        "cpu": "256",
+        "memory": "512",
+        "registeredAt": 1747062278.311,
+        "registeredBy": "arn:aws:sts::ACCOUNT_ID:assumed-role/voclabs/user-email@example.com",
+        "enableFaultInjection": false
+    },
+    "tags": []
+}
+

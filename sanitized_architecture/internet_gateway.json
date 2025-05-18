@@ -1,0 +1,21 @@
+﻿{
+    "InternetGateways": [
+        {
+            "Attachments": [
+                {
+                    "State": "available",
+                    "VpcId": "vpc-EXAMPLE"
+                }
+            ],
+            "InternetGatewayId": "igw-EXAMPLE",
+            "OwnerId": "ACCOUNT_ID",
+            "Tags": [
+                {
+                    "Key": "Name",
+                    "Value": "flask-iwg-1"
+                }
+            ]
+        }
+    ]
+}
+

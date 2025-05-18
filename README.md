@@ -21,9 +21,9 @@ This project implements a scalable and secure multi-tier architecture for a Flas
 
 | Route Table | Associated Subnets | Routes |
 |-------------|-------------------|--------|
-| flask-public-rtb (rtb-0518fa459a4c60e8e) | Public Subnets (10.0.1.0/24, 10.0.2.0/24) | Local VPC CIDR, 0.0.0.0/0 → Internet Gateway |
-| flask-rtb-1 (rtb-00a0e06aa7eb862d7) | Private App Subnets (10.0.3.0/24, 10.0.4.0/24) | Local VPC CIDR, 0.0.0.0/0 → NAT Gateway |
-| flask-db-rt-1 (rtb-08604774e031a077a) | Database Subnets (10.0.5.0/24, 10.0.6.0/24) | Local VPC CIDR |
+| flask-public-rtb | Public Subnets (10.0.1.0/24, 10.0.2.0/24) | Local VPC CIDR, 0.0.0.0/0 → Internet Gateway |
+| flask-rtb-1 | Private App Subnets (10.0.3.0/24, 10.0.4.0/24) | Local VPC CIDR, 0.0.0.0/0 → NAT Gateway |
+| flask-db-rt-1 | Database Subnets (10.0.5.0/24, 10.0.6.0/24) | Local VPC CIDR |
 
 ### IP Addressing
 
@@ -36,16 +36,16 @@ This project implements a scalable and secure multi-tier architecture for a Flas
 | Private App Subnet 2 (us-east-1b) | 10.0.4.0/24 |
 | Database Subnet 1 (us-east-1a) | 10.0.5.0/24 |
 | Database Subnet 2 (us-east-1b) | 10.0.6.0/24 |
-| Bastion Host | 98.83.119.96 |
-| NAT Gateway | 52.7.199.129 |
-| RDS Endpoint | flask-crud-db.czyocqcwwzna.us-east-1.rds.amazonaws.com |
-| Load Balancer DNS | flask-app-alb-1035767056.us-east-1.elb.amazonaws.com |
+| Bastion Host | [BASTION_HOST_IP] |
+| NAT Gateway | [NAT_GATEWAY_IP] |
+| RDS Endpoint | [RDS_ENDPOINT] |
+| Load Balancer DNS | [LOAD_BALANCER_DNS] |
 
 ## Technology Choices
 
 ### Front-end Tier: Application Load Balancer
 - **Why**: ALB provides layer 7 routing, native HTTPS support, and health checks to ensure high availability. It can distribute traffic across multiple availability zones for better reliability.
-- **Access**: The application is accessible via `https://flask-app-alb-1035767056.us-east-1.elb.amazonaws.com`
+- **Access**: The application is accessible via `https://[LOAD_BALANCER_DNS]`
 
 ### Middle Tier: ECS Fargate with Gunicorn
 - **Why**: Fargate eliminates server management for containers, allowing easy scaling and improved security. Gunicorn was chosen as the WSGI server as it's production-ready, supports multiple worker processes, and has good performance characteristics.
@@ -63,8 +63,8 @@ This project implements a scalable and secure multi-tier architecture for a Flas
 ## Accessing the Application
 
 The deployed application is accessible at:
-- HTTPS: `https://flask-app-alb-1035767056.us-east-1.elb.amazonaws.com`
-- HTTP: `http://flask-app-alb-1035767056.us-east-1.elb.amazonaws.com` (redirects to HTTPS)
+- HTTPS: `https://[LOAD_BALANCER_DNS]`
+- HTTP: `http://[LOAD_BALANCER_DNS]` (redirects to HTTPS)
 
 I will demonstrate the working application during the evaluation.
 
@@ -77,8 +77,8 @@ For secure access to the private RDS database, I've implemented a bastion host i
 The bastion host:
 - Runs Amazon Linux 2
 - Is located in public subnet (10.0.1.0/24)
-- Has IP: 98.83.119.96
-- Allows SSH access with the bastion-key-new.pem key
+- Has IP: [BASTION_HOST_IP]
+- Allows SSH access with the bastion-key.pem key
 
 ### Database Query Script
 
@@ -129,6 +129,10 @@ This project uses environment variables to manage sensitive configuration. To se
 Required environment variables:
 - `SECRET_KEY`: Flask application secret key
 - `DATABASE_URL`: MySQL database connection string
+- `DB_USERNAME`: Database username
+- `DB_PASSWORD`: Database password
+- `DB_HOST`: Database hostname
+- `DB_NAME`: Database name
 
 The application will load these variables from the .env file at runtime, or you can set them directly in your environment.
 
@@ -198,15 +202,15 @@ For security best practices:
    - Public subnets (10.0.1.0/24, 10.0.2.0/24)
    - Security group: flask-alb-sg
    - Target group with health check to port 8000
-3. Create ACM certificate for domain flask.quinten-de-meyer.be
+3. Create ACM certificate for domain [YOUR_DOMAIN]
 4. Add HTTPS listener with certificate
 5. Configure redirect from HTTP to HTTPS
 
 #### 5. Bastion Host
 1. Create Security Group "bastion-sg"
-2. Create EC2 key pair named "bastion-key-new"
+2. Create EC2 key pair named "bastion-key"
 3. Launch EC2 instance in public subnet (10.0.1.0/24) with Amazon Linux 2
-4. Assign Elastic IP: 98.83.119.96
+4. Assign Elastic IP
 5. Configure security group to allow SSH access
 
 ### AWS CLI Implementation
@@ -259,14 +263,14 @@ aws ec2 create-tags --resources $DB_SG_ID --tags Key=Name,Value=flask-db-sg
 # Create DB Subnet Group
 aws rds create-db-subnet-group --db-subnet-group-name flask-db-subnet-group --db-subnet-group-description "Subnet group for Flask app database" --subnet-ids $DB_SUBNET1_ID $DB_SUBNET2_ID
 
-# Create RDS Instance with Multi-AZ
+# Create RDS Instance with Multi-AZ - Using environment variables for sensitive information
 aws rds create-db-instance \
     --db-instance-identifier flask-crud-db \
-    --db-name flaskcrud \
+    --db-name ${DB_NAME} \
     --engine mysql \
     --engine-version 8.0.32 \
-    --master-username admin \
-    --master-user-password '*k62VSj4w6u1vSAxqk6h' \
+    --master-username ${DB_USERNAME} \
+    --master-user-password ${DB_PASSWORD} \
     --db-instance-class db.t3.micro \
     --allocated-storage 20 \
     --storage-type gp2 \
@@ -299,7 +303,7 @@ aws ecs create-cluster --cluster-name flask-app-cluster
 # Create CloudWatch Logs Group
 aws logs create-log-group --log-group-name /ecs/flask-app
 
-# Create Task Definition
+# Create Task Definition with environment variables
 aws ecs register-task-definition \
     --family flask-app-task \
     --network-mode awsvpc \
@@ -307,7 +311,7 @@ aws ecs register-task-definition \
     --cpu 256 \
     --memory 512 \
     --execution-role-arn arn:aws:iam::$(aws sts get-caller-identity --query 'Account' --output text):role/LabRole \
-    --container-definitions "[{\"name\":\"flask-app\",\"image\":\"$(aws sts get-caller-identity --query 'Account' --output text).dkr.ecr.$(aws configure get region).amazonaws.com/flask-crud-app:latest\",\"essential\":true,\"portMappings\":[{\"containerPort\":8000,\"hostPort\":8000,\"protocol\":\"tcp\"}],\"environment\":[{\"name\":\"SECRET_KEY\",\"value\":\"$mgX!8HG98&HY#tW92qC\"},{\"name\":\"DATABASE_URL\",\"value\":\"mysql+pymysql://admin:*k62VSj4w6u1vSAxqk6h@flask-crud-db.czyocqcwwzna.us-east-1.rds.amazonaws.com:3306/flaskcrud\"}],\"logConfiguration\":{\"logDriver\":\"awslogs\",\"options\":{\"awslogs-group\":\"/ecs/flask-app\",\"awslogs-region\":\"$(aws configure get region)\",\"awslogs-stream-prefix\":\"ecs\",\"awslogs-create-group\":\"true\",\"mode\":\"non-blocking\",\"max-buffer-size\":\"25m\"}}}]"
+    --container-definitions "[{\"name\":\"flask-app\",\"image\":\"$(aws sts get-caller-identity --query 'Account' --output text).dkr.ecr.$(aws configure get region).amazonaws.com/flask-crud-app:latest\",\"essential\":true,\"portMappings\":[{\"containerPort\":8000,\"hostPort\":8000,\"protocol\":\"tcp\"}],\"environment\":[{\"name\":\"SECRET_KEY\",\"value\":\"${SECRET_KEY}\"},{\"name\":\"DATABASE_URL\",\"value\":\"mysql+pymysql://${DB_USERNAME}:${DB_PASSWORD}@${DB_HOST}:3306/${DB_NAME}\"}],\"logConfiguration\":{\"logDriver\":\"awslogs\",\"options\":{\"awslogs-group\":\"/ecs/flask-app\",\"awslogs-region\":\"$(aws configure get region)\",\"awslogs-stream-prefix\":\"ecs\",\"awslogs-create-group\":\"true\",\"mode\":\"non-blocking\",\"max-buffer-size\":\"25m\"}}}]"
 
 # 4. Front-end Tier
 # Create Security Group for ALB
@@ -369,7 +373,7 @@ aws ecs create-service \
 # 5. HTTPS Configuration
 # Request certificate
 CERT_ARN=$(aws acm request-certificate \
-    --domain-name flask.quinten-de-meyer.be \
+    --domain-name ${DOMAIN_NAME} \
     --validation-method DNS \
     --query 'CertificateArn' \
     --output text)
@@ -394,14 +398,15 @@ aws elbv2 modify-listener \
 # Create Security Group for Bastion
 BASTION_SG_ID=$(aws ec2 create-security-group --group-name bastion-sg --description "Security group for bastion host" --vpc-id $VPC_ID --query 'GroupId' --output text)
 aws ec2 create-tags --resources $BASTION_SG_ID --tags Key=Name,Value=bastion-sg
-aws ec2 authorize-security-group-ingress --group-id $BASTION_SG_ID --protocol tcp --port 22 --cidr 0.0.0.0/0
+# Update to use your specific IP instead of 0.0.0.0/0 for better security
+aws ec2 authorize-security-group-ingress --group-id $BASTION_SG_ID --protocol tcp --port 22 --cidr ${YOUR_IP}/32
 
 # Update DB security group to allow access from bastion
 aws ec2 authorize-security-group-ingress --group-id $DB_SG_ID --protocol tcp --port 3306 --source-group $BASTION_SG_ID
 
 # Create key pair
-aws ec2 create-key-pair --key-name bastion-key-new --query 'KeyMaterial' --output text > bastion-key-new.pem
-chmod 400 bastion-key-new.pem
+aws ec2 create-key-pair --key-name bastion-key --query 'KeyMaterial' --output text > bastion-key.pem
+chmod 400 bastion-key.pem
 
 # Get latest Amazon Linux 2 AMI ID
 AMI_ID=$(aws ec2 describe-images --owners amazon --filters "Name=name,Values=amzn2-ami-hvm-*-x86_64-gp2" "Name=state,Values=available" --query "sort_by(Images, &CreationDate)[-1].ImageId" --output text)
@@ -411,7 +416,7 @@ INSTANCE_ID=$(aws ec2 run-instances \
     --image-id $AMI_ID \
     --count 1 \
     --instance-type t2.micro \
-    --key-name bastion-key-new \
+    --key-name bastion-key \
     --security-group-ids $BASTION_SG_ID \
     --subnet-id $PUBLIC_SUBNET1_ID \
     --associate-public-ip-address \
@@ -429,7 +434,7 @@ aws ec2 associate-address --allocation-id $BASTION_EIP_ALLOC_ID --instance-id $I
 ### 1. Modified config.py
 ```python
 class Config(object):
-    SECRET_KEY = os.environ.get('SECRET_KEY') or 'dev-temporary-key-not-for-production'
+    SECRET_KEY = os.environ.get('SECRET_KEY') or 'dev-key-for-development-only'
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'sqlite:///' + os.path.join(basedir, 'app.db')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 ```

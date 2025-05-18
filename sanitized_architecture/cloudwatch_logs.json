@@ -1,0 +1,14 @@
+﻿{
+    "logGroups": [
+        {
+            "logGroupName": "/ecs/flask-app",
+            "creationTime": 1747061719782,
+            "metricFilterCount": 0,
+            "arn": "arn:aws:logs:us-east-1:ACCOUNT_ID:log-group:/ecs/flask-app:*",
+            "storedBytes": 0,
+            "logGroupClass": "STANDARD",
+            "logGroupArn": "arn:aws:logs:us-east-1:ACCOUNT_ID:log-group:/ecs/flask-app"
+        }
+    ]
+}
+

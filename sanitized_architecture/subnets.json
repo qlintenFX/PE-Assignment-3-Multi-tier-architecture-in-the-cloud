@@ -1,0 +1,197 @@
+﻿{
+    "Subnets": [
+        {
+            "AvailabilityZoneId": "use1-az1",
+            "MapCustomerOwnedIpOnLaunch": false,
+            "OwnerId": "ACCOUNT_ID",
+            "AssignIpv6AddressOnCreation": false,
+            "Ipv6CidrBlockAssociationSet": [],
+            "Tags": [
+                {
+                    "Key": "Name",
+                    "Value": "flask-db-subnet-EXAMPLE"
+                }
+            ],
+            "SubnetArn": "arn:aws:ec2:us-east-1:ACCOUNT_ID:subnet/subnet-EXAMPLE",
+            "EnableDns64": false,
+            "Ipv6Native": false,
+            "PrivateDnsNameOptionsOnLaunch": {
+                "HostnameType": "ip-name",
+                "EnableResourceNameDnsARecord": false,
+                "EnableResourceNameDnsAAAARecord": false
+            },
+            "BlockPublicAccessStates": {
+                "InternetGatewayBlockMode": "off"
+            },
+            "SubnetId": "subnet-EXAMPLE",
+            "State": "available",
+            "VpcId": "vpc-EXAMPLE",
+            "CidrBlock": "10.0.6.0/24",
+            "AvailableIpAddressCount": 249,
+            "AvailabilityZone": "us-east-1b",
+            "DefaultForAz": false,
+            "MapPublicIpOnLaunch": false
+        },
+        {
+            "AvailabilityZoneId": "use1-az1",
+            "MapCustomerOwnedIpOnLaunch": false,
+            "OwnerId": "ACCOUNT_ID",
+            "AssignIpv6AddressOnCreation": false,
+            "Ipv6CidrBlockAssociationSet": [],
+            "Tags": [
+                {
+                    "Key": "Name",
+                    "Value": "flask-private-subnet-EXAMPLE"
+                }
+            ],
+            "SubnetArn": "arn:aws:ec2:us-east-1:ACCOUNT_ID:subnet/subnet-EXAMPLE",
+            "EnableDns64": false,
+            "Ipv6Native": false,
+            "PrivateDnsNameOptionsOnLaunch": {
+                "HostnameType": "ip-name",
+                "EnableResourceNameDnsARecord": false,
+                "EnableResourceNameDnsAAAARecord": false
+            },
+            "BlockPublicAccessStates": {
+                "InternetGatewayBlockMode": "off"
+            },
+            "SubnetId": "subnet-EXAMPLE",
+            "State": "available",
+            "VpcId": "vpc-EXAMPLE",
+            "CidrBlock": "10.0.4.0/24",
+            "AvailableIpAddressCount": 250,
+            "AvailabilityZone": "us-east-1b",
+            "DefaultForAz": false,
+            "MapPublicIpOnLaunch": false
+        },
+        {
+            "AvailabilityZoneId": "use1-az6",
+            "MapCustomerOwnedIpOnLaunch": false,
+            "OwnerId": "ACCOUNT_ID",
+            "AssignIpv6AddressOnCreation": false,
+            "Ipv6CidrBlockAssociationSet": [],
+            "Tags": [
+                {
+                    "Key": "Name",
+                    "Value": "flask-subnet-EXAMPLE"
+                }
+            ],
+            "SubnetArn": "arn:aws:ec2:us-east-1:ACCOUNT_ID:subnet/subnet-EXAMPLE",
+            "EnableDns64": false,
+            "Ipv6Native": false,
+            "PrivateDnsNameOptionsOnLaunch": {
+                "HostnameType": "ip-name",
+                "EnableResourceNameDnsARecord": false,
+                "EnableResourceNameDnsAAAARecord": false
+            },
+            "BlockPublicAccessStates": {
+                "InternetGatewayBlockMode": "off"
+            },
+            "SubnetId": "subnet-EXAMPLE",
+            "State": "available",
+            "VpcId": "vpc-EXAMPLE",
+            "CidrBlock": "10.0.1.0/24",
+            "AvailableIpAddressCount": 246,
+            "AvailabilityZone": "us-east-1a",
+            "DefaultForAz": false,
+            "MapPublicIpOnLaunch": false
+        },
+        {
+            "AvailabilityZoneId": "use1-az6",
+            "MapCustomerOwnedIpOnLaunch": false,
+            "OwnerId": "ACCOUNT_ID",
+            "AssignIpv6AddressOnCreation": false,
+            "Ipv6CidrBlockAssociationSet": [],
+            "Tags": [
+                {
+                    "Key": "Name",
+                    "Value": "flask-db-subnet-EXAMPLE"
+                }
+            ],
+            "SubnetArn": "arn:aws:ec2:us-east-1:ACCOUNT_ID:subnet/subnet-EXAMPLE",
+            "EnableDns64": false,
+            "Ipv6Native": false,
+            "PrivateDnsNameOptionsOnLaunch": {
+                "HostnameType": "ip-name",
+                "EnableResourceNameDnsARecord": false,
+                "EnableResourceNameDnsAAAARecord": false
+            },
+            "BlockPublicAccessStates": {
+                "InternetGatewayBlockMode": "off"
+            },
+            "SubnetId": "subnet-EXAMPLE",
+            "State": "available",
+            "VpcId": "vpc-EXAMPLE",
+            "CidrBlock": "10.0.5.0/24",
+            "AvailableIpAddressCount": 250,
+            "AvailabilityZone": "us-east-1a",
+            "DefaultForAz": false,
+            "MapPublicIpOnLaunch": false
+        },
+        {
+            "AvailabilityZoneId": "use1-az6",
+            "MapCustomerOwnedIpOnLaunch": false,
+            "OwnerId": "ACCOUNT_ID",
+            "AssignIpv6AddressOnCreation": false,
+            "Ipv6CidrBlockAssociationSet": [],
+            "Tags": [
+                {
+                    "Key": "Name",
+                    "Value": "flask-private-subnet-EXAMPLE"
+                }
+            ],
+            "SubnetArn": "arn:aws:ec2:us-east-1:ACCOUNT_ID:subnet/subnet-EXAMPLE",
+            "EnableDns64": false,
+            "Ipv6Native": false,
+            "PrivateDnsNameOptionsOnLaunch": {
+                "HostnameType": "ip-name",
+                "EnableResourceNameDnsARecord": false,
+                "EnableResourceNameDnsAAAARecord": false
+            },
+            "BlockPublicAccessStates": {
+                "InternetGatewayBlockMode": "off"
+            },
+            "SubnetId": "subnet-EXAMPLE",
+            "State": "available",
+            "VpcId": "vpc-EXAMPLE",
+            "CidrBlock": "10.0.3.0/24",
+            "AvailableIpAddressCount": 250,
+            "AvailabilityZone": "us-east-1a",
+            "DefaultForAz": false,
+            "MapPublicIpOnLaunch": false
+        },
+        {
+            "AvailabilityZoneId": "use1-az1",
+            "MapCustomerOwnedIpOnLaunch": false,
+            "OwnerId": "ACCOUNT_ID",
+            "AssignIpv6AddressOnCreation": false,
+            "Ipv6CidrBlockAssociationSet": [],
+            "Tags": [
+                {
+                    "Key": "Name",
+                    "Value": "flask-subnet-EXAMPLE"
+                }
+            ],
+            "SubnetArn": "arn:aws:ec2:us-east-1:ACCOUNT_ID:subnet/subnet-EXAMPLE",
+            "EnableDns64": false,
+            "Ipv6Native": false,
+            "PrivateDnsNameOptionsOnLaunch": {
+                "HostnameType": "ip-name",
+                "EnableResourceNameDnsARecord": false,
+                "EnableResourceNameDnsAAAARecord": false
+            },
+            "BlockPublicAccessStates": {
+                "InternetGatewayBlockMode": "off"
+            },
+            "SubnetId": "subnet-EXAMPLE",
+            "State": "available",
+            "VpcId": "vpc-EXAMPLE",
+            "CidrBlock": "10.0.2.0/24",
+            "AvailableIpAddressCount": 251,
+            "AvailabilityZone": "us-east-1b",
+            "DefaultForAz": false,
+            "MapPublicIpOnLaunch": false
+        }
+    ]
+}
+

@@ -1,0 +1,56 @@
+﻿{
+    "Listeners": [
+        {
+            "ListenerArn": "arn:aws:elasticloadbalancing:us-east-1:ACCOUNT_ID:listener/app/flask-app-alb/LOAD_BALANCER_ID/3d1a3659fb9d8327",
+            "LoadBalancerArn": "arn:aws:elasticloadbalancing:us-east-1:ACCOUNT_ID:loadbalancer/app/flask-app-alb/LOAD_BALANCER_ID",
+            "Port": 443,
+            "Protocol": "HTTPS",
+            "Certificates": [
+                {
+                    "CertificateArn": "arn:aws:acm:us-east-1:ACCOUNT_ID:certificate/CERTIFICATE_ID"
+                }
+            ],
+            "SslPolicy": "ELBSecurityPolicy-2016-08",
+            "DefaultActions": [
+                {
+                    "Type": "forward",
+                    "TargetGroupArn": "arn:aws:elasticloadbalancing:us-east-1:ACCOUNT_ID:targetgroup/flask-app-tg/8c6938b0a2a3d5a3",
+                    "ForwardConfig": {
+                        "TargetGroups": [
+                            {
+                                "TargetGroupArn": "arn:aws:elasticloadbalancing:us-east-1:ACCOUNT_ID:targetgroup/flask-app-tg/8c6938b0a2a3d5a3",
+                                "Weight": 1
+                            }
+                        ],
+                        "TargetGroupStickinessConfig": {
+                            "Enabled": false
+                        }
+                    }
+                }
+            ],
+            "MutualAuthentication": {
+                "Mode": "off"
+            }
+        },
+        {
+            "ListenerArn": "arn:aws:elasticloadbalancing:us-east-1:ACCOUNT_ID:listener/app/flask-app-alb/LOAD_BALANCER_ID/454497716b9a8464",
+            "LoadBalancerArn": "arn:aws:elasticloadbalancing:us-east-1:ACCOUNT_ID:loadbalancer/app/flask-app-alb/LOAD_BALANCER_ID",
+            "Port": 80,
+            "Protocol": "HTTP",
+            "DefaultActions": [
+                {
+                    "Type": "redirect",
+                    "RedirectConfig": {
+                        "Protocol": "HTTPS",
+                        "Port": "443",
+                        "Host": "#{host}",
+                        "Path": "/#{path}",
+                        "Query": "#{query}",
+                        "StatusCode": "HTTP_301"
+                    }
+                }
+            ]
+        }
+    ]
+}
+

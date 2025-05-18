@@ -1,0 +1,29 @@
+﻿{
+    "TargetGroups": [
+        {
+            "TargetGroupArn": "arn:aws:elasticloadbalancing:us-east-1:ACCOUNT_ID:targetgroup/flask-app-tg/8c6938b0a2a3d5a3",
+            "TargetGroupName": "flask-app-tg",
+            "Protocol": "HTTP",
+            "Port": 8000,
+            "VpcId": "vpc-EXAMPLE",
+            "HealthCheckProtocol": "HTTP",
+            "HealthCheckPort": "traffic-port",
+            "HealthCheckEnabled": true,
+            "HealthCheckIntervalSeconds": 30,
+            "HealthCheckTimeoutSeconds": 5,
+            "HealthyThresholdCount": 2,
+            "UnhealthyThresholdCount": 2,
+            "HealthCheckPath": "/",
+            "Matcher": {
+                "HttpCode": "200"
+            },
+            "LoadBalancerArns": [
+                "arn:aws:elasticloadbalancing:us-east-1:ACCOUNT_ID:loadbalancer/app/flask-app-alb/LOAD_BALANCER_ID"
+            ],
+            "TargetType": "ip",
+            "ProtocolVersion": "HTTP1",
+            "IpAddressType": "ipv4"
+        }
+    ]
+}
+

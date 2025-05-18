@@ -1,40 +1,24 @@
-# Ignore SSH keys and sensitive files
-*.pem
-*.key
-*.ppk
-*.p12
-*.pfx
-*.crt
-*.cer
-
-# Ignore environment variables
+# Environment variables
 .env
 *.env
 
-# Ignore AWS credentials
+# AWS credentials
 .aws/
-aws-credentials.json
-credentials.json
+*.pem
+*.ppk
+*labsuser*
+*credentials*
 
-# Ignore Python virtual environment
-venv/
-env/
-.venv/
-*.pyc
-__pycache__/
+# Architecture files with sensitive data
+architecture/
+!sanitized_architecture/
 
-# Ignore build artifacts
-*.html
-architecture_diagram
-architecture_diagram.png
-PE-Assignment-3-Documentation.pdf
+# Logs
+logs/
+*.log
 
-# OS-specific files
-.DS_Store
-Thumbs.db
-
-# Environment variables
-.env.local
+# Node modules
+node_modules/
 
 # Python
 __pycache__/
@@ -43,6 +27,8 @@ __pycache__/
 *.so
 .Python
 env/
+venv/
+ENV/
 build/
 develop-eggs/
 dist/
@@ -58,6 +44,38 @@ var/
 .installed.cfg
 *.egg
 
-# Logs
-logs/
-*.log 
+# Flask
+instance/
+.webassets-cache
+
+# Database
+*.db
+*.sqlite3
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Ignore SSH keys and sensitive files
+*.p12
+*.pfx
+*.crt
+*.cer
+
+# Ignore Python virtual environment
+.venv/
+
+# Ignore build artifacts
+*.html
+architecture_diagram
+architecture_diagram.png
+PE-Assignment-3-Documentation.pdf
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Environment variables
+.env.local 
